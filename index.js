@@ -66,7 +66,23 @@ async function fetchData() {
         imgShiny.title = `${name} shiny sprite`;
         document.getElementById('shiny-sparkles').style.display = 'block'
 
-        document.getElementById('baseStatTotal').textContent = `Base stat total: ${baseStatTotal}`;
+        for(const item of speciesData.pokedex_numbers) {
+            if(item.pokedex.name === 'national') {
+                pokedexNr = item.entry_number;
+                break;
+            }
+        }
+
+        document.getElementById('pokedexNr').textContent = `Pokédex Nr. ${pokedexNr}`;
+
+        document.getElementById('hpStat').textContent = `HP: ${data.stats[0].base_stat}`;
+        document.getElementById('atkStat').textContent = `Attack: ${data.stats[1].base_stat}`;
+        document.getElementById('defStat').textContent = `defence: ${data.stats[2].base_stat}`;
+        document.getElementById('spAtkStat').textContent = `Sp. Atk: ${data.stats[3].base_stat}`;
+        document.getElementById('spDefStat').textContent = `Sp. Def: ${data.stats[4].base_stat}`;
+        document.getElementById('speedStat').textContent = `Speed: ${data.stats[5].base_stat}`;
+
+        document.getElementById('baseStatTotal').textContent = `Total: ${baseStatTotal}`;
     }
     catch(error) {
         console.error(error);
