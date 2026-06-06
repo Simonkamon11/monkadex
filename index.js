@@ -33,17 +33,24 @@ async function fetchData() {
         
         document.getElementById('pokemonName').textContent = name;
 
-        document.getElementById('type1').src = `pokemon_types/Type_${data.types[0].type.name.charAt(0).toUpperCase() + data.types[0].type.name.substring(1)}_HOME.webp`;
-        document.getElementById('type1').style.display = 'block';
+        type1Img = document.getElementById('type1');
+        type1 = data.types[0].type.name.charAt(0).toUpperCase() + data.types[0].type.name.substring(1);
+        type1Img.src = `images/pokemon_types/Type_${type1}_HOME.webp`;
+        type1Img.style.display = 'block';
+        type1Img.title = `${type1} type`;
 
         if(data.types.length === 2) {
-            document.getElementById('type2').src = `pokemon_types/Type_${data.types[1].type.name.charAt(0).toUpperCase() + data.types[1].type.name.substring(1)}_HOME.webp`;
-            document.getElementById('type2').style.display = 'block';
+            type2Img = document.getElementById('type2');
+            type2 = data.types[1].type.name.charAt(0).toUpperCase() + data.types[1].type.name.substring(1);
+            type2Img.src = `images/pokemon_types/Type_${type2}_HOME.webp`;
+            type2Img.style.display = 'block';
+            type2Img.title = `${type2} type`;
         }
 
         for(const item of speciesData.genera) {
             if(item.language.name === 'en') {
                 pokemonSpecies = item.genus;
+                break;
             }
         }
         document.getElementById('pokemonSpecies').textContent = 'The ' + pokemonSpecies;
@@ -57,6 +64,7 @@ async function fetchData() {
         imgShiny.src = shinySprite;
         imgShiny.style.display = 'block';
         imgShiny.title = `${name} shiny sprite`;
+        document.getElementById('shiny-sparkles').style.display = 'block'
 
         document.getElementById('baseStatTotal').textContent = `Base stat total: ${baseStatTotal}`;
     }

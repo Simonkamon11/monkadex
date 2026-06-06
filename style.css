@@ -6,7 +6,7 @@ body{
     justify-content: gap;
     gap: 15px;
 }
-#pokemonImages-container img{
+.pokemonImages{
     background-color: rgb(139,172,15);
 
     border-style: solid;
@@ -80,4 +80,14 @@ body{
 #pokemonSpecies{
     margin-top: 0px;
     margin-bottom: 0px;
+}
+#shinyImages-container{
+    position: relative;
+}
+#shiny-sparkles{
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 40px;
+    height: auto;
 }
