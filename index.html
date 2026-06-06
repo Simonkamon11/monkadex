@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pokédex</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Bitcount+Single:wght@100..900&family=Press+Start+2P&display=swap" rel="stylesheet">
+</head>
+<body>
+    <h1 id="title" class="text">Pokédex</h1>
+    <input type="text" id="pokemonInput" placeholder="Enter Pokémon name">
+    <button onclick="fetchData()" id="fetch-button">Fetch data</button><br>
+    <p id="fetchText" class="text"></p>
+
+    <div id="name-type-container">
+        <h1 id="pokemonName" class="text"></h1>
+        <img src="" alt="type1" id="type1" style="display: none;">
+        <img src="" alt="type2" id="type2" style="display: none;">
+    </div>
+    <h2 id="pokemonSpecies" class="text"></h2>
+    <div id="pokemonImages-container">
+        <img src="" alt="Pokémon Sprite" id="pokemonSprite" style="display: none;">
+        <img src="" alt="Pokémon Shiny Sprite" id="shinySprite" style="display: none;"> 
+    </div>
+
+    <h2 id="baseStatTotal" class="text"></h2>
+
+    <script src="index.js"></script>
+</html>

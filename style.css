@@ -1,0 +1,83 @@
+body{
+    background-color: rgb(155,188,15);
+}
+#pokemonImages-container{
+    display: flex;
+    justify-content: gap;
+    gap: 15px;
+}
+#pokemonImages-container img{
+    background-color: rgb(139,172,15);
+
+    border-style: solid;
+    border-color: rgb(15,56,15);
+    border-width: 5px;
+    border-radius: 5px;
+
+    height: 200px;
+    width: auto;
+}
+#name-type-container{
+    display: flex;
+    justify-content: gap;
+    gap: 15px;
+}
+#name-type-container img{
+    height: 50px;
+    width: auto;
+
+    margin-bottom: 0px;
+}
+#title{
+    border-bottom-style: solid;
+    border-width: 6px;
+    font-size: 50px;
+}
+.text{
+    color: rgb(15,56,15);
+
+    font-family: "Bitcount Single", "consolas", sans-serif;
+}
+#fetch-button{
+    background-color: rgb(139,172,15);
+    color: rgb(15,56,15);
+
+    font-family: "Bitcount Single", "consolas", sans-serif;
+    font-size: 20px;
+
+    padding: 3px;
+
+    border-style: solid;
+    border-color: rgb(15,56,15);
+    border-width: 2px;
+    border-radius: 8px;
+}
+#pokemonInput{
+    font-family: "Bitcount Single", "consolas", sans-serif;
+    font-size: 20px;
+
+    background-color: white;
+    color: rgb(15,56,15);
+
+    padding: 3px;
+
+    border-style: solid;
+    border-color: rgb(15,56,15);
+    border-width: 2px;
+    border-radius: 8px;
+}
+#fetchText{
+    font-size: 20px;
+    padding-bottom: 10px;
+    border-bottom-style: solid;
+    border-width: 6px;
+}
+#pokemonName{
+    font-size: 50px;
+    margin-bottom: 0px;
+    margin-top: 0px;
+}
+#pokemonSpecies{
+    margin-top: 0px;
+    margin-bottom: 0px;
+}
