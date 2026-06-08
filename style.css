@@ -3,7 +3,6 @@ body{
 }
 #pokemonImages-container{
     display: flex;
-    justify-content: gap;
     gap: 15px;
 }
 .pokemonImages{
@@ -19,7 +18,6 @@ body{
 }
 #name-type-container{
     display: flex;
-    justify-content: gap;
     gap: 15px;
 }
 #name-type-container img{
@@ -117,7 +115,6 @@ body{
 }
 .damage-multipliers-container{
     display: flex;
-    justify-content: gap;
     gap: 10px;
 }
 .damage-multipliers-container h2{
@@ -136,7 +133,6 @@ body{
 }
 #fetchText-container{
     display: flex;
-    justify-content: gap;
     gap: 15px;
 }
 #didYou{
@@ -160,7 +156,6 @@ body{
 }
 #gender-container{
     display: flex;
-    justify-content: gap;
     gap: 15px;
 }
 #maleIcon{
