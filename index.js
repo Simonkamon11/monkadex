@@ -231,6 +231,9 @@ async function fetchData() {
     catch(error) {
         console.error(error);
         document.getElementById('fetchText').textContent = 'Could not fetch data';
+        const didYou = document.getElementById('didYou');
+        if (didYou !== null) {didYou.remove();}
+        document.querySelectorAll('.meanText').forEach(el => el.remove());
         let fetchTextContainer = document.getElementById('fetchText-container');
         let newP;
         switch(document.getElementById('pokemonInput').value.toLowerCase().replace(" ", "-")) {
@@ -242,15 +245,15 @@ async function fetchData() {
 
                 newP = document.createElement('p');
                 newP.classList.add('meanText', 'clickable');
-                newP.id = 'shaymin-land'
-                newP.textContent = 'shaymin-land'
+                newP.id = 'shaymin-land';
+                newP.textContent = 'shaymin-land';
                 fetchTextContainer.appendChild(newP);
                 newP.setAttribute('onclick', 'fetchNewInput(\'shaymin-land\'); document.getElementById(\'didYou\').remove(); document.querySelectorAll(\'.meanText\').forEach(el => el.remove());');
             
                 newP = document.createElement('p');
                 newP.classList.add('meanText', 'clickable');
-                newP.id = 'shaymin-sky'
-                newP.textContent = 'shaymin-sky'
+                newP.id = 'shaymin-sky';
+                newP.textContent = 'shaymin-sky';
                 fetchTextContainer.appendChild(newP);
                 newP.setAttribute('onclick', 'fetchNewInput(\'shaymin-sky\'); document.getElementById(\'didYou\').remove(); document.querySelectorAll(\'.meanText\').forEach(el => el.remove());');
                 break;
@@ -262,15 +265,15 @@ async function fetchData() {
 
                 newP = document.createElement('p');
                 newP.classList.add('meanText', 'clickable');
-                newP.id = 'nidoran-m'
-                newP.textContent = 'nidoran-m'
+                newP.id = 'nidoran-m';
+                newP.textContent = 'nidoran-m';
                 fetchTextContainer.appendChild(newP);
                 newP.setAttribute('onclick', 'fetchNewInput(\'nidoran-m\'); document.getElementById(\'didYou\').remove(); document.querySelectorAll(\'.meanText\').forEach(el => el.remove());');
             
                 newP = document.createElement('p');
                 newP.classList.add('meanText', 'clickable');
-                newP.id = 'nidoran-f'
-                newP.textContent = 'nidoran-f'
+                newP.id = 'nidoran-f';
+                newP.textContent = 'nidoran-f';
                 fetchTextContainer.appendChild(newP);
                 newP.setAttribute('onclick', 'fetchNewInput(\'nidoran-f\'); document.getElementById(\'didYou\').remove(); document.querySelectorAll(\'.meanText\').forEach(el => el.remove());');
                 break;
