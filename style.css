@@ -3,6 +3,7 @@
     gap: 20px;
 
     width: 100vw;
+    min-width: 450px;
 
     margin: -8px;
     padding: 5px;
