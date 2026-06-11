@@ -1,3 +1,4 @@
+switchTheme('pokedex');
 
 async function fetchData() {
     
@@ -283,7 +284,38 @@ async function fetchData() {
         }
     }
 }
+
 function fetchNewInput(text) {
     document.getElementById('pokemonInput').value = text;
     fetchData();
+}
+
+function switchTheme(theme) {
+    themes = {
+        dark: ['rgb(50, 50, 50)', 'rgb(255, 255, 255)', 'rgb(100, 100, 100)'],
+        light: ['rgb(255, 255, 255)', 'rgb(0, 0, 0)', 'rgb(200, 200, 200)'],
+        pokedex: ['rgb(220, 10, 45)', 'rgb(0, 0, 0)', 'rgb(41, 170, 253)'],
+        gameboy: ['rgb(155, 188, 15)', 'rgb(15, 56, 15)', 'rgb(139, 172, 15)']
+    }
+
+    document.getElementById('body').style['background-color'] = themes[theme][0];
+    document.getElementById('body').style['color'] = themes[theme][1];
+
+    document.getElementById('fetch-button').style['background-color'] = themes[theme][2];
+    document.getElementById('fetch-button').style['color'] = themes[theme][1];
+    document.getElementById('fetch-button').style['border-color'] = themes[theme][1];
+
+    document.getElementById('pokemonInput').style['border-color'] = themes[theme][1];
+
+    document.getElementById('themes-container').style['background'] = themes[theme][2];
+    
+    document.getElementById('themes-text').style['color'] = themes[theme][1];
+    document.querySelectorAll('.theme').forEach(element => {
+        element.style['color'] = themes[theme][1];
+    });
+
+    document.querySelectorAll('.pokemonImages').forEach(element => {
+        element.style['background-color'] = themes[theme][2];
+        element.style['border-color'] = themes[theme][1];
+    });
 }

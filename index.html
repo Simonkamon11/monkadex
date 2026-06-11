@@ -4,11 +4,30 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pokédex</title>
-    <link rel="icon" href="images/pokeball.png">
+    <link rel="icon" href="images/pokeballs/pokeball_pokedex.png">
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Bitcount+Single:wght@100..900&family=Press+Start+2P&display=swap" rel="stylesheet">
 </head>
 <body id="body">
+    <div id="themes-container">
+        <h2 class="text" id="themes-text">themes: </h2>
+        <div class="theme-container">
+            <img src="images/pokeballs/pokeball_pokedex.png" alt="" class="theme-img">
+            <h2 class="theme text clickable" onclick="switchTheme('pokedex')">pokédex</h2>
+        </div>
+        <div class="theme-container">
+            <img src="images/pokeballs/pokeball_dark.png" alt="" class="theme-img">
+            <h2 class="theme text clickable" onclick="switchTheme('dark')">dark</h2>
+        </div>
+        <div class="theme-container">
+            <img src="images/pokeballs/pokeball_light.png" alt="" class="theme-img">
+            <h2 class="theme text clickable" onclick="switchTheme('light')">light</h2>
+        </div>
+        <div class="theme-container">
+            <img src="images/pokeballs/pokeball_gameboy.png" alt="" class="theme-img">
+            <h2 class="theme text clickable" onclick="switchTheme('gameboy')">gameboy</h2>
+        </div>
+    </div>
     <h1 id="title" class="text">Pokédex</h1>
     <h2 id="owner" class="text">by Simonkamon11</h2>
     <input type="text" id="pokemonInput" placeholder="Enter Pokémon name">
@@ -64,8 +83,10 @@
     <h2 id="height" class="text"></h2>
     <h2 id="weight" class="text"></h2>
 
+    <!--
     <h2 id="evolvesFromText" class="title-text"></h2>
     <h2 id="preEvoText" class="clickable"></h2>
+    -->
 
     <script src="index.js"></script>
 </html>
