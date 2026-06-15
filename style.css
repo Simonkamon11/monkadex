@@ -46,11 +46,11 @@
     height: 200px;
     width: auto;
 }
-#name-type-container{
+.name-type-container{
     display: flex;
     gap: 15px;
 }
-#name-type-container img{
+.name-type-container img{
     height: 50px;
     width: auto;
 
@@ -90,12 +90,12 @@
     border-width: 2px;
     border-radius: 8px;
 }
-#pokemonName{
+.pokemonName{
     font-size: 50px;
     margin-bottom: 0px;
     margin-top: 0px;
 }
-#pokemonSpecies{
+.pokemonSpecies{
     margin-top: 0px;
     margin-bottom: 0px;
 }
@@ -126,6 +126,8 @@
 
     margin-bottom: 15px;
     font-size: 30px;
+
+    width: fit-content;
 }
 .damage-multipliers-container{
     display: flex;
@@ -194,12 +196,6 @@
 #femaleIcon{
     filter: invert(49%) sepia(95%) saturate(2500%) hue-rotate(290deg) brightness(105%) contrast(102%);
 }
-#abilitiesText{
-    font-family: "Bitcount Single", "consolas", sans-serif;
-    
-    margin-bottom: 10px;
-    font-size: 25px;
-}
 .abilities{
     white-space: pre;
     margin-top: 5px;
@@ -213,11 +209,4 @@
 }
 .clickable:hover{
     cursor: pointer;
-}
-#preEvoText{
-    font-family: "Bitcount Single", "consolas", sans-serif;
-
-    margin-bottom: 15px;
-    margin-top: 0px;
-    font-size: 40px;
 }

@@ -10,6 +10,9 @@ async function fetchData() {
         const pokemonName = document.getElementById('pokemonInput').value.toLowerCase().replace(" ", "-");
         const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${pokemonName}`);
 
+        if(response.status === 404) {
+            throw new Error('Pokémon not found');
+        }
         if(!response.ok) {
             throw new Error('Could not fetch data');
         }
@@ -78,6 +81,8 @@ async function fetchData() {
 
         document.getElementById('pokedexNr').textContent = `Pokédex Nr. ${pokedexNr}`;
 
+        document.getElementById('statsText').style.display = 'block';
+
         document.getElementById('hpStat').textContent = `HP:         ${data.stats[0].base_stat}`;
         document.getElementById('hpStat').style.whiteSpace = 'pre';
         document.getElementById('atkStat').textContent = `Attack:     ${data.stats[1].base_stat}`;
@@ -93,7 +98,7 @@ async function fetchData() {
         document.getElementById('baseStatTotal').textContent = `Total:      ${baseStatTotal}`;
         document.getElementById('baseStatTotal').style.whiteSpace = 'pre';
 
-        document.getElementById('damageMultipliers').textContent = 'Damage multipliers:';
+        document.getElementById('damageMultipliers').style.display = 'block';
         let damageMultipliers = {};
         for(const item of data.types) {
             let typeName = item.type.name;
@@ -189,7 +194,7 @@ async function fetchData() {
         }
 
         document.querySelectorAll('.abilities').forEach(el => el.remove());
-        document.getElementById('abilitiesText').textContent = 'Abilities:';
+        document.getElementById('abilitiesText').style.display = 'block';
         for(const item of data.abilities) {
             newH2 = document.createElement('h2');
             if(item.is_hidden) {
@@ -202,6 +207,8 @@ async function fetchData() {
             document.getElementById('abilities-container').appendChild(newH2);
         }
 
+        document.getElementById('measurementsText').style.display = 'block';
+
         const heightM = data.height / 10;
         const heightIn = Math.round(heightM * 39,3700787402);
         document.getElementById('height').textContent = `Height: ${heightM} m (${Math.floor(heightIn/12)}'${Math.round(heightIn%12)}")`;
@@ -210,41 +217,104 @@ async function fetchData() {
         const weightLbs = Math.round(weightKg * 2.20462262185 * 10) / 10;
         document.getElementById('weight').textContent = `Weight: ${weightKg} kg (${weightLbs} lbs)`;
 
-        /*
+        const preEvoText = document.getElementById('preEvoText');
+        const preEvoNameHTML = document.getElementById('preEvoName');
+        const preEvoSpeciesHTML = document.getElementById('preEvoSpecies');
+        const preEvoImg = document.getElementById('preEvoImg');
+        const evoText = document.getElementById('evoText');
+        for(const item of [preEvoText, preEvoNameHTML, preEvoSpeciesHTML, preEvoImg, evoText]) {
+            item.style.display = 'none';
+        }
+
         const evolutionResponse = await fetch(speciesData.evolution_chain.url);
         if(!evolutionResponse.ok) {
             throw new Error('Could not fetch evolution chain data');
         }
         const evolutionData = await evolutionResponse.json();
-        */
+        
+        let chainLength = 1;
+        if(evolutionData.chain.evolves_to[0] !== undefined) {
+            chainLength++;
+            if(evolutionData.chain.evolves_to[0].evolves_to[0] !== undefined) {
+                chainLength++;
+            }
+        }
+
+        if(chainLength >= 2) {
+            if(evolutionData.chain.species.name === pokemonName) {
+                
+            }
+            else {
+                for(let i = 0; i < evolutionData.chain.evolves_to.length; i++) {
+                    if(evolutionData.chain.evolves_to[i].species.name === pokemonName) {
+                        const preEvoName = evolutionData.chain.species.name;
+
+                        const preEvoResponse = await fetch(`https://pokeapi.co/api/v2/pokemon/${preEvoName}`);
+                        if(!preEvoResponse.ok) {
+                            throw new Error('Could not fetch previous-evolution data');
+                        }
+                        const preEvoData = await preEvoResponse.json();
+
+                        preEvoText.style.display = 'block';
+
+                        preEvoNameHTML.textContent = preEvoName.charAt(0).toUpperCase() + preEvoName.substring(1);
+                        preEvoNameHTML.style.display = 'block';
+                        preEvoNameHTML.setAttribute('onclick', `fetchNewInput(\'${preEvoName}\'); document.getElementById(\'didYou\').remove(); document.querySelectorAll(\'.meanText\').forEach(el => el.remove());`);
+                        
+                        const preEvoSpeciesResponse = await fetch(preEvoData.species.url);
+                        if(!preEvoSpeciesResponse.ok) {
+                            throw new Error('Could not fetch previous-evolution species data');
+                        }
+                        const preEvoSpeciesData = await preEvoSpeciesResponse.json();
+
+                        for(const item of preEvoSpeciesData.genera) {
+                            if(item.language.name === 'en') {
+                                preEvoSpecies = item.genus;
+                                break;
+                            }
+                        }
+                        preEvoSpeciesHTML.textContent = 'The ' + preEvoSpecies;
+                        preEvoSpeciesHTML.style.display = 'block';
+
+                        preEvoImg.src = preEvoData.sprites.front_default;
+                        preEvoImg.style.display = 'block';
+                    }
+                    else {
+                        
+                    }
+                }
+            }
+        }
     }
     catch(error) {
         console.error(error);
         document.getElementById('fetchText').textContent = 'Could not fetch data';
 
-        const didYou = document.getElementById('didYou');
+        if(error.message === 'Pokémon not found') {
+            const didYou = document.getElementById('didYou');
 
-        if (didYou !== null) {didYou.remove();}
-        document.querySelectorAll('.meanText').forEach(el => el.remove());
+            if (didYou !== null) {didYou.remove();}
+            document.querySelectorAll('.meanText').forEach(el => el.remove());
 
-        const inputtedName = document.getElementById('pokemonInput').value.toLowerCase().replace(" ", "-");
+            const inputtedName = document.getElementById('pokemonInput').value.toLowerCase().replace(" ", "-");
 
-        const top3ClosestPokemonNames = await get3ClosestPokemonNames(inputtedName);
+            const top3ClosestPokemonNames = await get3ClosestPokemonNames(inputtedName);
 
-        const didYouContainer = document.getElementById('didYou-container');
-        let newP;
-        newP = document.createElement('p');
-        newP.id = 'didYou';
-        newP.textContent = 'did you mean?:';
-        didYouContainer.appendChild(newP);
-
-        for(const name of top3ClosestPokemonNames) {
+            const didYouContainer = document.getElementById('didYou-container');
+            let newP;
             newP = document.createElement('p');
-            newP.classList.add('meanText', 'clickable');
-            newP.id = name;
-            newP.textContent = name;
+            newP.id = 'didYou';
+            newP.textContent = 'did you mean?:';
             didYouContainer.appendChild(newP);
-            newP.setAttribute('onclick', `fetchNewInput(\'${name}\'); document.getElementById(\'didYou\').remove(); document.querySelectorAll(\'.meanText\').forEach(el => el.remove());`);
+
+            for(const name of top3ClosestPokemonNames) {
+                newP = document.createElement('p');
+                newP.classList.add('meanText', 'clickable');
+                newP.id = name;
+                newP.textContent = name;
+                didYouContainer.appendChild(newP);
+                newP.setAttribute('onclick', `fetchNewInput(\'${name}\'); document.getElementById(\'didYou\').remove(); document.querySelectorAll(\'.meanText\').forEach(el => el.remove());`);
+            }
         }
     }
 }

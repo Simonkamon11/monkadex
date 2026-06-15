@@ -39,12 +39,12 @@
         <div id="didYou-container"></div>
     </div>
 
-    <div id="name-type-container">
-        <h1 id="pokemonName" class="text"></h1>
+    <div class="name-type-container">
+        <h1 id="pokemonName" class="text pokemonName"></h1>
         <img src="" alt="type1" id="type1" style="display: none;">
         <img src="" alt="type2" id="type2" style="display: none;">
     </div>
-    <h2 id="pokemonSpecies" class="text"></h2>
+    <h2 id="pokemonSpecies" class="text pokemonSpecies"></h2>
     <div id="pokemonImages-container">
         <img src="" alt="Pokémon Sprite" id="pokemonSprite" style="display: none;" class="pokemonImages">
         <div class="corner-icon-container">
@@ -55,40 +55,86 @@
 
     <h2 id="pokedexNr" class="text"></h2>
 
-    <h2 class="stats" id="hpStat"></h2>
-    <h2 class="stats" id="atkStat"></h2>
-    <h2 class="stats" id="defStat"></h2>
-    <h2 class="stats" id="spAtkStat"></h2>
-    <h2 class="stats" id="spDefStat"></h2>
-    <h2 class="stats" id="speedStat"></h2>
+    <h2 id="statsText" class="title-text clickable" style="display: none;" onclick="
+    switch(document.getElementById('stats-container').style.display) {
+        case('none'): document.getElementById('stats-container').style.display = 'block'; break;
+        default: document.getElementById('stats-container').style.display = 'none'; break;
+    }">Base stats:</h2>
+    <div id="stats-container">
+        <h2 class="stats" id="hpStat"></h2>
+        <h2 class="stats" id="atkStat"></h2>
+        <h2 class="stats" id="defStat"></h2>
+        <h2 class="stats" id="spAtkStat"></h2>
+        <h2 class="stats" id="spDefStat"></h2>
+        <h2 class="stats" id="speedStat"></h2>
+        <h2 id="baseStatTotal" class="text"></h2>
+    </div>
 
-    <h2 id="baseStatTotal" class="text"></h2>
-
-    <h2 id="damageMultipliers" class="title-text"></h2>
+    <h2 id="damageMultipliers" class="title-text clickable" style="display: none;" onclick="
+    switch(document.getElementById('damage-multipliers-container').style.display) {
+        case('none'): document.getElementById('damage-multipliers-container').style.display = 'block'; break;
+        default: document.getElementById('damage-multipliers-container').style.display = 'none'; break;
+    }">Damage multipliers:</h2>
     <div id="damage-multipliers-container"></div>
 
-    <h2 id="genderDifferencesText" class="title-text" style="display: none;">Gender differences:</h2>
+    <h2 id="genderDifferencesText" class="title-text clickable" style="display: none;" onclick="
+    switch(document.getElementById('gender-closable-container').style.display) {
+        case('none'): document.getElementById('gender-closable-container').style.display = 'block'; break;
+        default: document.getElementById('gender-closable-container').style.display = 'none'; break;
+    }">Gender differences:</h2>
 
-    <div id="gender-container">
-        <div class="corner-icon-container">
-            <img src="" alt="Pokémon Male Sprite" id="maleSprite" style="display: none;" class="pokemonImages"> 
-            <img src="images/male.png" alt="male icon" id="maleIcon" class="corner-icon" style="display: none;">
-        </div>
-        <div class="corner-icon-container">
-            <img src="" alt="Pokémon Female Sprite" id="femaleSprite" style="display: none;" class="pokemonImages">
-            <img src="images/female.png" alt="female icon" id="femaleIcon" class="corner-icon" style="display: none;">
+    <div id="gender-closable-container" >
+        <div id="gender-container">
+            <div class="corner-icon-container">
+                <img src="" alt="Pokémon Male Sprite" id="maleSprite" style="display: none;" class="pokemonImages"> 
+                <img src="images/male.png" alt="male icon" id="maleIcon" class="corner-icon" style="display: none;">
+            </div>
+            <div class="corner-icon-container">
+                <img src="" alt="Pokémon Female Sprite" id="femaleSprite" style="display: none;" class="pokemonImages">
+                <img src="images/female.png" alt="female icon" id="femaleIcon" class="corner-icon" style="display: none;">
+            </div>
         </div>
     </div>
 
-    <h2 id="abilitiesText"></h2>
+    <h2 id="abilitiesText" class="title-text clickable" style="display: none;" onclick="
+    switch(document.getElementById('abilities-container').style.display) {
+        case('none'): document.getElementById('abilities-container').style.display = 'block'; break;
+        default: document.getElementById('abilities-container').style.display = 'none'; break;
+    }">Abilities:</h2>
     <div id="abilities-container"></div>
 
-    <h2 id="height" class="text"></h2>
-    <h2 id="weight" class="text"></h2>
+    <h2 id="measurementsText" class="title-text clickable" style="display: none;" onclick="
+    switch(document.getElementById('measurements-container').style.display) {
+        case('none'): document.getElementById('measurements-container').style.display = 'block'; break;
+        default: document.getElementById('measurements-container').style.display = 'none'; break;
+    }">Measurements:</h2>
+    <div id="measurements-container">
+        <h2 id="height" class="text"></h2>
+        <h2 id="weight" class="text"></h2>
+    </div>
+    <h2 id="preEvoText" class="title-text clickable" style="display: none;" onclick="
+    switch(document.getElementById('preEvo-container').style.display) {
+        case('none'): document.getElementById('preEvo-container').style.display = 'block'; break;
+        default: document.getElementById('preEvo-container').style.display = 'none'; break;
+    }">Previous evolution:</h2>
+    <div id="preEvo-container">
+        <div class="name-type-container">
+            <h2 id="preEvoName" class="text pokemonName" style="display: none;"></h2>
+            <img src="" alt="type1" id="preEvoType1" style="display: none;">
+            <img src="" alt="type2" id="preEvoType2" style="display: none;">
+        </div>
+        <h2 id="preEvoSpecies" class="text pokemonSpecies" style="display: none;"></h2>
+        <img src="" alt="" class="pokemonImages" id="preEvoImg" style="display: none;">
+    </div>
 
-    <!--
-    <h2 id="preEvoText" class="title-text" style="display: none;">Previous evolution</h2>
-    -->
+    <h2 id="evoText" class="title-text clickable" style="display: none;" onclick="
+    switch(document.getElementById('evo-container').style.display) {
+        case('none'): document.getElementById('evo-container').style.display = 'block'; break;
+        default: document.getElementById('evo-container').style.display = 'none'; break;
+    }">Evolution:</h2>
+    <div id="evo-container">
+
+    </div>
 
     <script src="index.js"></script>
 </html>
