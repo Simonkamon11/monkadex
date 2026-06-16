@@ -39,18 +39,22 @@ async function fetchData() {
         
         document.getElementById('pokemonName').textContent = name;
 
-        type1Img = document.getElementById('type1');
-        type1 = data.types[0].type.name.charAt(0).toUpperCase() + data.types[0].type.name.substring(1);
+        const type1Img = document.getElementById('type1');
+        const type1 = data.types[0].type.name.charAt(0).toUpperCase() + data.types[0].type.name.substring(1);
         type1Img.src = `images/pokemon_types/Type_${type1}_HOME.webp`;
         type1Img.style.display = 'block';
         type1Img.title = `${type1} type`;
 
+        const type2Img = document.getElementById('type2');
         if(data.types.length === 2) {
-            type2Img = document.getElementById('type2');
-            type2 = data.types[1].type.name.charAt(0).toUpperCase() + data.types[1].type.name.substring(1);
+            const type2 = data.types[1].type.name.charAt(0).toUpperCase() + data.types[1].type.name.substring(1);
             type2Img.src = `images/pokemon_types/Type_${type2}_HOME.webp`;
             type2Img.style.display = 'block';
             type2Img.title = `${type2} type`;
+        }
+        else {
+            type2Img.src = '';
+            type2Img.style.display = 'none';
         }
 
         for(const item of speciesData.genera) {
@@ -84,19 +88,15 @@ async function fetchData() {
         document.getElementById('statsText').style.display = 'block';
 
         document.getElementById('hpStat').textContent = `HP:         ${data.stats[0].base_stat}`;
-        document.getElementById('hpStat').style.whiteSpace = 'pre';
         document.getElementById('atkStat').textContent = `Attack:     ${data.stats[1].base_stat}`;
-        document.getElementById('atkStat').style.whiteSpace = 'pre';
         document.getElementById('defStat').textContent = `defence:    ${data.stats[2].base_stat}`;
-        document.getElementById('defStat').style.whiteSpace = 'pre';
         document.getElementById('spAtkStat').textContent = `Sp. Atk:    ${data.stats[3].base_stat}`;
-        document.getElementById('spAtkStat').style.whiteSpace = 'pre';
         document.getElementById('spDefStat').textContent = `Sp. Def:    ${data.stats[4].base_stat}`;
-        document.getElementById('spDefStat').style.whiteSpace = 'pre';
         document.getElementById('speedStat').textContent = `Speed:      ${data.stats[5].base_stat}`;
-        document.getElementById('speedStat').style.whiteSpace = 'pre';
         document.getElementById('baseStatTotal').textContent = `Total:      ${baseStatTotal}`;
-        document.getElementById('baseStatTotal').style.whiteSpace = 'pre';
+        for(const item of ['hpStat', 'atkStat', 'defStat', 'spAtkStat', 'spDefStat', 'speedStat', 'baseStatTotal']) {
+            document.getElementById(item).style.whiteSpace = 'pre';
+        }
 
         document.getElementById('damageMultipliers').style.display = 'block';
         let damageMultipliers = {};
@@ -219,10 +219,12 @@ async function fetchData() {
 
         const preEvoText = document.getElementById('preEvoText');
         const preEvoNameHTML = document.getElementById('preEvoName');
+        const preEvoType1HTML = document.getElementById('preEvoType1');
+        const preEvoType2HTML = document.getElementById('preEvoType2');
         const preEvoSpeciesHTML = document.getElementById('preEvoSpecies');
         const preEvoImg = document.getElementById('preEvoImg');
         const evoText = document.getElementById('evoText');
-        for(const item of [preEvoText, preEvoNameHTML, preEvoSpeciesHTML, preEvoImg, evoText]) {
+        for(const item of [preEvoText, preEvoNameHTML, preEvoType1HTML, preEvoType2HTML, preEvoSpeciesHTML, preEvoImg, evoText]) {
             item.style.display = 'none';
         }
 
@@ -259,8 +261,24 @@ async function fetchData() {
 
                         preEvoNameHTML.textContent = preEvoName.charAt(0).toUpperCase() + preEvoName.substring(1);
                         preEvoNameHTML.style.display = 'block';
-                        preEvoNameHTML.setAttribute('onclick', `fetchNewInput(\'${preEvoName}\'); document.getElementById(\'didYou\').remove(); document.querySelectorAll(\'.meanText\').forEach(el => el.remove());`);
+                        preEvoNameHTML.setAttribute('onclick', `fetchNewInput(\'${preEvoName}\'); window.scrollTo(0, 0);`);
                         
+                        const preEvoType1 = preEvoData.types[0].type.name.charAt(0).toUpperCase() + preEvoData.types[0].type.name.substring(1);
+                        preEvoType1HTML.src = `images/pokemon_types/Type_${preEvoType1}_HOME.webp`;
+                        preEvoType1HTML.style.display = 'block';
+                        preEvoType1HTML.title = `${preEvoType1} type`;
+                        
+                        if(preEvoData.types.length === 2) {
+                            const preEvoType2 = preEvoData.types[1].type.name.charAt(0).toUpperCase() + preEvoData.types[1].type.name.substring(1);
+                            preEvoType2HTML.src = `images/pokemon_types/Type_${preEvoType2}_HOME.webp`;
+                            preEvoType2HTML.style.display = 'block';
+                            preEvoType2HTML.title = `${preEvoType2HTML} type`;
+                        }
+                        else {
+                            preEvoType2HTML.src = '';
+                            preEvoType2HTML.style.display = 'none';
+                        }
+
                         const preEvoSpeciesResponse = await fetch(preEvoData.species.url);
                         if(!preEvoSpeciesResponse.ok) {
                             throw new Error('Could not fetch previous-evolution species data');
@@ -277,10 +295,66 @@ async function fetchData() {
                         preEvoSpeciesHTML.style.display = 'block';
 
                         preEvoImg.src = preEvoData.sprites.front_default;
+                        preEvoImg.title = `${preEvoName.charAt(0).toUpperCase() + preEvoName.substring(1)} (previous evolution) sprite`
                         preEvoImg.style.display = 'block';
+
+                        break;
                     }
                     else {
-                        
+                        for(let j = 0; j < evolutionData.chain.evolves_to[i].evolves_to.length; j++) {
+                            if(evolutionData.chain.evolves_to[i].evolves_to[j].species.name === pokemonName) {
+                                const preEvoName = evolutionData.chain.evolves_to[i].species.name;
+
+                                const preEvoResponse = await fetch(`https://pokeapi.co/api/v2/pokemon/${preEvoName}`);
+                                if(!preEvoResponse.ok) {
+                                    throw new Error('Could not fetch previous-evolution data');
+                                }
+                                const preEvoData = await preEvoResponse.json();
+
+                                preEvoText.style.display = 'block';
+
+                                preEvoNameHTML.textContent = preEvoName.charAt(0).toUpperCase() + preEvoName.substring(1);
+                                preEvoNameHTML.style.display = 'block';
+                                preEvoNameHTML.setAttribute('onclick', `fetchNewInput(\'${preEvoName}\'); window.scrollTo(0, 0);`);
+                                
+                                const preEvoType1 = preEvoData.types[0].type.name.charAt(0).toUpperCase() + preEvoData.types[0].type.name.substring(1);
+                                preEvoType1HTML.src = `images/pokemon_types/Type_${preEvoType1}_HOME.webp`;
+                                preEvoType1HTML.style.display = 'block';
+                                preEvoType1HTML.title = `${preEvoType1} type`;
+                                
+                                if(preEvoData.types.length === 2) {
+                                    const preEvoType2 = preEvoData.types[1].type.name.charAt(0).toUpperCase() + preEvoData.types[1].type.name.substring(1);
+                                    preEvoType2HTML.src = `images/pokemon_types/Type_${preEvoType2}_HOME.webp`;
+                                    preEvoType2HTML.style.display = 'block';
+                                    preEvoType2HTML.title = `${preEvoType2HTML} type`;
+                                }
+                                else {
+                                    preEvoType2HTML.src = '';
+                                    preEvoType2HTML.style.display = 'none';
+                                }
+
+                                const preEvoSpeciesResponse = await fetch(preEvoData.species.url);
+                                if(!preEvoSpeciesResponse.ok) {
+                                    throw new Error('Could not fetch previous-evolution species data');
+                                }
+                                const preEvoSpeciesData = await preEvoSpeciesResponse.json();
+
+                                for(const item of preEvoSpeciesData.genera) {
+                                    if(item.language.name === 'en') {
+                                        preEvoSpecies = item.genus;
+                                        break;
+                                    }
+                                }
+                                preEvoSpeciesHTML.textContent = 'The ' + preEvoSpecies;
+                                preEvoSpeciesHTML.style.display = 'block';
+
+                                preEvoImg.src = preEvoData.sprites.front_default;
+                                preEvoImg.title = `${preEvoName.charAt(0).toUpperCase() + preEvoName.substring(1)} (previous evolution) sprite`
+                                preEvoImg.style.display = 'block';
+
+                                break;
+                            }
+                        }
                     }
                 }
             }
@@ -313,7 +387,7 @@ async function fetchData() {
                 newP.id = name;
                 newP.textContent = name;
                 didYouContainer.appendChild(newP);
-                newP.setAttribute('onclick', `fetchNewInput(\'${name}\'); document.getElementById(\'didYou\').remove(); document.querySelectorAll(\'.meanText\').forEach(el => el.remove());`);
+                newP.setAttribute('onclick', `fetchNewInput(\'${name}\'); window.scrollTo(0, 0); document.getElementById(\'didYou\').remove(); document.querySelectorAll(\'.meanText\').forEach(el => el.remove());`);
             }
         }
     }
@@ -326,7 +400,7 @@ function fetchNewInput(text) {
 
 function switchTheme(theme) {
     themes = {
-        dark: ['rgb(50, 50, 50)', 'rgb(255, 255, 255)', 'rgb(100, 100, 100)'],
+        dark: ['rgb(40, 40, 40)', 'rgb(170, 170, 170)', 'rgb(80, 80, 80)'],
         light: ['rgb(255, 255, 255)', 'rgb(0, 0, 0)', 'rgb(200, 200, 200)'],
         pokedex: ['rgb(220, 10, 45)', 'rgb(0, 0, 0)', 'rgb(41, 170, 253)'],
         gameboy: ['rgb(155, 188, 15)', 'rgb(15, 56, 15)', 'rgb(139, 172, 15)']
