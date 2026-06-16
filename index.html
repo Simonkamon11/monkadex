@@ -65,7 +65,7 @@
         </div>
     </div>
 
-    <h2 id="pokedexNr" class="text"></h2>
+    <h2 id="pokedexNr" class="text pokedexNr"></h2>
 
     <h2 id="statsText" class="title-text clickable" style="display: none;" onclick="
     switch(document.getElementById('stats-container').style.display) {
@@ -137,14 +137,15 @@
         </div>
         <h2 id="preEvoSpecies" class="text pokemonSpecies" style="display: none;"></h2>
         <img src="" alt="" class="pokemonImages" id="preEvoImg" style="display: none;">
+        <h2 id="preEvoPokedexNr" class="text pokedexNr"></h2>
     </div>
 
-    <h2 id="evoText" class="title-text clickable" style="display: none;" onclick="
-    switch(document.getElementById('evo-container').style.display) {
-        case('none'): document.getElementById('evo-container').style.display = 'block'; break;
-        default: document.getElementById('evo-container').style.display = 'none'; break;
-    }">Evolution:</h2>
-    <div id="evo-container">
+    <h2 id="nextEvosText" class="title-text clickable" style='display: none;' onclick="
+    switch(document.getElementById('nextEvos-container').style.display) {
+        case('none'): document.getElementById('nextEvos-container').style.display = 'block'; break;
+        default: document.getElementById('nextEvos-container').style.display = 'none'; break;
+    }"></h2>
+    <div id="nextEvos-container">
 
     </div>
 
