@@ -1,12 +1,11 @@
-const params = new URLSearchParams(window.location.search);
+globalThis.params = new URLSearchParams(window.location.search);
 
-const pokemonParam = params.get('pokemon');
+globalThis.pokemonParam = params.get('pokemon');
 if(pokemonParam) {
     fetchNewInput(pokemonParam);
 }
-
-let usingTheme;
-const themeParam = params.get('theme');
+globalThis.usingTheme;
+globalThis.themeParam = params.get('theme');
 if(themeParam) {
     switchTheme(themeParam);
 }
@@ -621,7 +620,9 @@ function switchTheme(theme) {
         dark: ['rgb(40, 40, 40)', 'rgb(170, 170, 170)', 'rgb(80, 80, 80)'],
         light: ['rgb(255, 255, 255)', 'rgb(0, 0, 0)', 'rgb(200, 200, 200)'],
         pokedex: ['rgb(220, 10, 45)', 'rgb(0, 0, 0)', 'rgb(41, 170, 253)'],
-        gameboy: ['rgb(155, 188, 15)', 'rgb(15, 56, 15)', 'rgb(139, 172, 15)']
+        gameboy: ['rgb(155, 188, 15)', 'rgb(15, 56, 15)', 'rgb(139, 172, 15)'],
+        ultraball: ['rgb(40, 40, 40)', 'rgb(253, 209, 60)', 'rgb(30, 30, 30)'],
+        premier: ['rgb(255, 255, 255)', 'rgb(220, 10, 45)', 'rgb(255, 255, 255)']
     }
 
     document.getElementById('body').style['background-color'] = themes[theme][0];
