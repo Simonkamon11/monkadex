@@ -1,5 +1,18 @@
-let usingTheme = 'pokedex';
-switchTheme('pokedex');
+const params = new URLSearchParams(window.location.search);
+
+const pokemonParam = params.get('pokemon');
+if(pokemonParam) {
+    fetchNewInput(pokemonParam);
+}
+
+let usingTheme;
+const themeParam = params.get('theme');
+if(themeParam) {
+    switchTheme(themeParam);
+}
+else {
+    switchTheme('pokedex');
+}
 
 async function fetchData() {
     const didYou = document.getElementById('didYou');
@@ -9,6 +22,11 @@ async function fetchData() {
     document.getElementById('fetchText').textContent = 'Fetching data...';
     try {
         const pokemonName = document.getElementById('pokemonInput').value.toLowerCase().replace(" ", "-");
+
+        params.set('pokemon', pokemonName);
+        const newUrl = `${window.location.pathname}?${params.toString()}`;
+        window.history.pushState({}, "", newUrl);
+
         const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${pokemonName}`);
 
         if(response.status === 404) {
@@ -589,6 +607,10 @@ function fetchNewInput(text) {
 
 function switchTheme(theme) {
     usingTheme = theme
+
+    params.set('theme', theme);
+    const newUrl = `${window.location.pathname}?${params.toString()}`;
+    window.history.pushState({}, "", newUrl);
 
     themes = {
         dark: ['rgb(40, 40, 40)', 'rgb(170, 170, 170)', 'rgb(80, 80, 80)'],
