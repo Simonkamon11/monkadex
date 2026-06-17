@@ -1,3 +1,28 @@
+#header{
+    display: flex;
+    gap: 50px;
+    
+    width: 100vw;
+
+    margin: -8px;
+    margin-bottom: 8px;
+}
+#logo-container{
+    display: flex;
+    padding: 5px;
+}
+#logo-img{
+    height: 30px;
+    width: auto;
+}
+#logo-text{
+    font-family: "Bitcount Single", "consolas", sans-serif;
+    font-size: 25px;
+
+    margin: 0;
+    padding: 2px;
+    height: 28px;
+}
 #themes-text-container{
     display: flex;
 

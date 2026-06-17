@@ -21,6 +21,27 @@
     <link href="https://fonts.googleapis.com/css2?family=Bitcount+Single:wght@100..900&family=Press+Start+2P&display=swap" rel="stylesheet">
 </head>
 <body id="body">
+    <div id="header">
+        <div id="logo-container" class="clickable" onclick="window.location.href = 'simonkamon11.github.io/monkadex';">
+            <img src="images/pokeballs/pokeball_pokedex.png" id="logo-img">
+            <h1 class="header-text" id="logo-text">Monkadex</h1>
+        </div>
+        <script>
+            black = 'rgb(0, 0, 0)';
+            white = 'rgb(255, 255, 255)';
+            if(window.matchMedia("(prefers-color-scheme: dark)").matches) {
+                colour1 = black
+                colour2 = white
+            }
+            else {
+                colour1 = white
+                colour2 = black
+            }
+            document.getElementById('header').style['background-color'] = colour1
+            document.getElementById('logo-text').style['color'] = colour2
+        </script>
+    </div>
+
     <div id="themes-text-container">
         <h2 class="text" id="themes-text">themes: </h2>
         <div id="themes-container">
