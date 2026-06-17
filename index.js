@@ -11,7 +11,12 @@ if(themeParam) {
     switchTheme(themeParam);
 }
 else {
-    switchTheme('pokedex');
+    if(window.matchMedia("(prefers-color-scheme: dark)").matches) {
+        switchTheme('dark');
+    }
+    else {
+        switchTheme('pokedex');
+    }
 }
 
 async function fetchData() {
