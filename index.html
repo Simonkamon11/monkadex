@@ -12,7 +12,7 @@
     <meta property="og:title" content="Monkadex">
     <meta property="og:description" content="Monkadex: Pokédex by Simonkamon11">
     <meta property="og:type" content="website">
-    <meta property="og:image" content="https://simonkamon11.github.io/monkadex/images/pokeballs/pokeball_dark.png">
+    <meta property="og:image" content="https://simonkamon11.github.io/monkadex/images/pokeballs/pokeball_pokedex.png">
     <link rel="icon" href="images/pokeballs/pokeball_pokedex.png" type="image/x-icon">
 
     <meta name="google-site-verification" content="Op-umb3OSG__1x3ZN32ioLroTl8Cs2zviCj1dNvSYbU" />
@@ -20,12 +20,13 @@
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Bitcount+Single:wght@100..900&family=Press+Start+2P&display=swap" rel="stylesheet">
 </head>
-<body id="body">
+<body id="index-body">
     <div id="header">
         <div id="logo-container" class="clickable" onclick="window.location.href = 'https://simonkamon11.github.io/monkadex';">
             <img src="images/pokeballs/pokeball_pokedex.png" id="logo-img">
             <h1 class="header-text" id="logo-text">Monkadex</h1>
         </div>
+        <h2 id="about-page-link" class="clickable" onclick="window.location.href = 'https://simonkamon11.github.io/monkadex/about/';">about</h2>
         <script>
             black = 'rgb(0, 0, 0)';
             white = 'rgb(255, 255, 255)';
@@ -39,6 +40,7 @@
             }
             document.getElementById('header').style['background-color'] = colour1
             document.getElementById('logo-text').style['color'] = colour2
+            document.getElementById('about-page-link').style['color'] = colour2
         </script>
     </div>
 
@@ -178,5 +180,5 @@
 
     </div>
 
-    <script src="index.js"></script>
+    <script src="script.js"></script>
 </html>

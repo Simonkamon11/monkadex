@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About</title>
+
+    <meta name="description" content="The about-page of Monkadex by Simonkamon11">
+    <meta name="keywords" content="about-page, pokémon, pokédex">
+    <meta name="author" content="Simon Aarseth">
+
+    <link rel="stylesheet" href="../style.css">
+    <link rel="icon" href="../images/pokeballs/pokeball_pokedex.png" type="image/x-icon">
+    <link href="https://fonts.googleapis.com/css2?family=Bitcount+Single:wght@100..900&family=Press+Start+2P&display=swap" rel="stylesheet">
+</head>
+<body id="about-body">
+    <div id="header">
+        <div id="logo-container" class="clickable" onclick="window.location.href = 'https://simonkamon11.github.io/monkadex';">
+            <img src="../images/pokeballs/pokeball_pokedex.png" id="logo-img">
+            <h1 class="header-text" id="logo-text">Monkadex</h1>
+        </div>
+        <h2 id="about-page-link" class="clickable" onclick="window.location.href = 'https://simonkamon11.github.io/monkadex/about/';">about</h2>
+        <script>
+            black = 'rgb(0, 0, 0)';
+            white = 'rgb(255, 255, 255)';
+            if(window.matchMedia("(prefers-color-scheme: dark)").matches) {
+                colour1 = black
+                colour2 = white
+            }
+            else {
+                colour1 = white
+                colour2 = black
+            }
+            document.getElementById('header').style['background-color'] = colour1
+            document.getElementById('logo-text').style['color'] = colour2
+            document.getElementById('about-page-link').style['color'] = colour2
+        </script>
+    </div>
+
+    <div id="about-page-border"></div>
+
+    <h1 class="text">About</h1>
+
+    <h2 class="text title-text-about-page">Sources:</h2>
+    <div class="source-container">
+        <h3 class="text link-pointer">All data: </h3>
+        <h3 class="text clickable link" onclick="window.open('https://pokeapi.co', '_blank');">https://pokeapi.co</h3>
+    </div>
+    <div class="source-container">
+        <h3 class="text link-pointer">Bitcount Single font: </h3>
+        <h3 class="text clickable link" onclick="window.open('https://fonts.google.com/specimen/Bitcount+Single', '_blank');">https://fonts.google.com/specimen/Bitcount+Single</h3>
+    </div>
+
+    <script src="../script.js"></script>
+</body>
+</html>
