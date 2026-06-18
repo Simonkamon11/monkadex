@@ -60,6 +60,10 @@
                 <h2 class="theme text clickable" onclick="switchTheme('light')">light</h2>
             </div>
             <div class="theme-container">
+                <img src="images/pokeballs/pokeball_black.png" alt="" class="theme-img">
+                <h2 class="theme text clickable" onclick="switchTheme('black')">black</h2>
+            </div>
+            <div class="theme-container">
                 <img src="images/pokeballs/pokeball_ultraball.png" alt="" class="theme-img">
                 <h2 class="theme text clickable" onclick="switchTheme('ultraball')">ultraball</h2>
             </div>
@@ -176,9 +180,14 @@
         case('none'): document.getElementById('nextEvos-container').style.display = 'block'; break;
         default: document.getElementById('nextEvos-container').style.display = 'none'; break;
     }"></h2>
-    <div id="nextEvos-container">
+    <div id="nextEvos-container"></div>
 
-    </div>
+    <h2 id="pokedexEntriesText" class="title-text clickable" style="display: none;" onclick="
+    switch(document.getElementById('pokedexEntries-container').style.display) {
+        case('none'): document.getElementById('pokedexEntries-container').style.display = 'block'; break;
+        default: document.getElementById('pokedexEntries-container').style.display = 'none'; break;
+    }">Pokédex entries:</h2>
+    <div id="pokedexEntries-container"></div>
 
     <script src="script.js"></script>
 </html>

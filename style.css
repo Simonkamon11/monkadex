@@ -5,10 +5,11 @@
 
     margin: -8px;
     margin-bottom: 8px;
+    padding: 5px;
+    padding-right: 0;
 }
 #logo-container{
     display: flex;
-    padding: 5px;
 }
 #logo-img{
     height: 30px;
@@ -25,9 +26,9 @@
 #about-page-link{
     margin: 0;
     margin-left: auto;
-    margin-right: 5px;
+    margin-right: 35px;
 
-    padding: 7px;
+    padding: 2px;
     padding-right: 0;
 
     font-family: "Bitcount Single", "consolas", sans-serif;
@@ -49,6 +50,7 @@
 
     margin: -8px;
     padding: 5px;
+    padding-right: 0;
 }
 #themes-text{
     font-size: 15px;
@@ -86,7 +88,7 @@
     border-radius: 5px;
 
     height: 200px;
-    width: auto;
+    width: 200px;
 }
 .name-type-container{
     display: flex;
@@ -269,4 +271,30 @@
 
     font-style: italic;
     text-decoration: underline;
+}
+.pokedexEntryText{
+    font-size: 20px;
+    margin-bottom: 5px;
+}
+.pokedexEntry{
+    font-size: 20px;
+    margin-bottom: 5px;
+}
+.pokedexEntryText-container-container{
+    display: flex;
+    gap: 15px;
+
+    margin-bottom: 20px;
+}
+.pokedexEntryText-container{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    width: 120px;
+    flex: 0 0 120px;
+}
+.pokedexEntry-container{
+    display: flex;
+    align-items: center;
 }
