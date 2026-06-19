@@ -86,11 +86,13 @@ async function fetchData() {
 
         const speciesResponse = await fetch(data.species.url);
         if (!speciesResponse.ok) {
-            throw new Error('Could not fetch species data')
+            throw new Error('Could not fetch species data');
         }
         document.getElementById('fetchText').textContent = 'Data fetched successfully';
 
         const speciesData = await speciesResponse.json();
+
+        const speciesName = speciesData.name;
 
         let baseStatTotal = 0;
         for (const stat of data.stats) {
@@ -316,7 +318,7 @@ async function fetchData() {
         document.querySelectorAll('.nextEvosContent').forEach(el => el.remove());
 
         if (chainLength >= 2) {
-            if (evolutionData.chain.species.name === pokemonName) {
+            if (evolutionData.chain.species.name === speciesName) {
                 if (evolutionData.chain.evolves_to.length === 1) {
                     nextEvosText.textContent = 'Next Evolution:';
                 }
@@ -340,9 +342,11 @@ async function fetchData() {
 
                     bestScore = 0
                     for(const item of pokemonList) {
-                        currentScore = similarityScore(item, nextEvoName);
-                        if(currentScore > bestScore) {
-                            closestName = item;
+                        if(!item.includes('-mega') && !item.includes('-gmax')) {
+                            currentScore = similarityScore(item, nextEvoName);
+                            if(currentScore > bestScore) {
+                                closestName = item;
+                            }
                         }
                     }
                     nextEvoName = closestName;
@@ -410,15 +414,17 @@ async function fetchData() {
             }
             else {
                 for (let i = 0; i < evolutionData.chain.evolves_to.length; i++) {
-                    if (evolutionData.chain.evolves_to[i].species.name === pokemonName) {
+                    if (evolutionData.chain.evolves_to[i].species.name === speciesName) {
                         let preEvoName = evolutionData.chain.species.name;
 
                         let bestScore = 0
                         let currentScore, closestName;
                         for(const item of pokemonList) {
-                            currentScore = similarityScore(item,preEvoName);
-                            if(currentScore > bestScore) {
-                                closestName = item;
+                            if(!item.includes('-mega') && !item.includes('-gmax')) {
+                                currentScore = similarityScore(item, preEvoName);
+                                if(currentScore > bestScore) {
+                                    closestName = item;
+                                }
                             }
                         }
                         preEvoName = closestName;
@@ -505,9 +511,11 @@ async function fetchData() {
 
                                 bestScore = 0
                                 for(const item of pokemonList) {
-                                    currentScore = similarityScore(item, nextEvoName);
-                                    if(currentScore > bestScore) {
-                                        closestName = item;
+                                    if(!item.includes('-mega') && !item.includes('-gmax')) {
+                                        currentScore = similarityScore(item, nextEvoName);
+                                        if(currentScore > bestScore) {
+                                            closestName = item;
+                                        }
                                     }
                                 }
                                 nextEvoName = closestName;
@@ -578,15 +586,17 @@ async function fetchData() {
                     }
                     else {
                         for (let j = 0; j < evolutionData.chain.evolves_to[i].evolves_to.length; j++) {
-                            if (evolutionData.chain.evolves_to[i].evolves_to[j].species.name === pokemonName) {
+                            if (evolutionData.chain.evolves_to[i].evolves_to[j].species.name === speciesName) {
                                 let preEvoName = evolutionData.chain.evolves_to[i].species.name;
 
                                 let bestScore = 0
                                 let currentScore, closestName;
                                 for(const item of pokemonList) {
-                                    currentScore = similarityScore(item,preEvoName);
-                                    if(currentScore > bestScore) {
-                                        closestName = item;
+                                    if(!item.includes('-mega') && !item.include('-gmax')) {
+                                        currentScore = similarityScore(item, preEvoName);
+                                        if(currentScore > bestScore) {
+                                            closestName = item;
+                                        }
                                     }
                                 }
                                 preEvoName = closestName;
@@ -677,7 +687,6 @@ async function fetchData() {
                 }
             }
         }
-        console.log(pokedexEntries);
 
         let newP, newPokedexEntryTextContainerContainer, newPokedexEntrytextContainer, newPokedexEntryContainer; // also using old 'newH2' variable
         for(const entry of pokedexEntries) {
