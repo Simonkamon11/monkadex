@@ -1,19 +1,111 @@
-if (window.location.pathname.endsWith("/about/") || window.location.pathname.endsWith("/about/index.html")) {
+if(window.location.pathname.endsWith("/locations/") || window.location.pathname.endsWith("/locations/index.html")) {
+    setupLocations();
+}
+else if(window.location.pathname.endsWith("/shinytools/") || window.location.pathname.endsWith("/shinytools/index.html")) {
+    setupShinytools();
+}
+else if (window.location.pathname.endsWith("/about/") || window.location.pathname.endsWith("/about/index.html")) {
     setupAbout();
 }
-else {
-    setupIndexPage();
+else if (window.location.pathname.endsWith("/sitemap.html")) {
+    setupSitemap();
+}
+else { // this will always be the index page
+    setupIndex();
 }
 
-function setupIndexPage() {
+function setupIndex() {
     globalThis.params = new URLSearchParams(window.location.search);
 
     globalThis.pokemonParam = params.get('pokemon');
+    globalThis.usingTheme;
+    globalThis.themeParam = params.get('theme');
     if (pokemonParam) {
         fetchNewInput(pokemonParam);
     }
+    if (themeParam) {
+        switchTheme(themeParam);
+    }
+    else {
+        if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+            switchTheme('dark');
+        }
+        else {
+            switchTheme('pokedex');
+        }
+    }
+}
+
+function setupLocations() {
+    globalThis.params = new URLSearchParams(window.location.search);
+
+    globalThis.locationParam = params.get('location');
+    globalThis.areaParam = params.get('area');
+    globalThis.regionParam = params.get('region');
     globalThis.usingTheme;
     globalThis.themeParam = params.get('theme');
+    if (areaParam) {
+        if(locationParam) {
+            params.delete('location');
+            const newUrl = `${window.location.pathname}?${params.toString()}`;
+            window.history.pushState({}, "", newUrl);
+        }
+        if(regionParam) {
+            params.delete('region');
+            const newUrl = `${window.location.pathname}?${params.toString()}`;
+            window.history.pushState({}, "", newUrl);
+        }
+        fetchNewLocationInput(areaParam);
+    }
+    else if(locationParam) {
+        if(regionParam) {
+            params.delete('region');
+            const newUrl = `${window.location.pathname}?${params.toString()}`;
+            window.history.pushState({}, "", newUrl);
+        }
+        fetchNewAreaInput(locationParam);
+    }
+    else if(regionParam) {
+        fetchNewRegionInput(regionParam);
+    }
+    else {
+        fetchRegionsData();
+    }
+    if (themeParam) {
+        switchTheme(themeParam);
+    }
+    else {
+        if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+            switchTheme('dark');
+        }
+        else {
+            switchTheme('pokedex');
+        }
+    }
+}
+
+function setupShinytools() {
+    globalThis.params = new URLSearchParams(window.location.search);
+
+    globalThis.pokemonParam = params.get('pokemon');
+    globalThis.gameParam = params.get('game');
+    globalThis.countParam = params.get('count');
+    globalThis.usingTheme;
+    globalThis.themeParam = params.get('theme');
+    if (pokemonParam) {
+        fetchNewShinyInput(pokemonParam);
+    }
+    if(gameParam) {
+        fetchNewGameInput(gameParam);
+    }
+    if(countParam) {
+        encounterCounter('set', countParam);
+    }
+    else {
+        params.set('count', '0');
+        const newUrl = `${window.location.pathname}?${params.toString()}`;
+        window.history.pushState({}, "", newUrl);
+    }
     if (themeParam) {
         switchTheme(themeParam);
     }
@@ -30,7 +122,7 @@ function setupIndexPage() {
 function setupAbout() {
     const params = new URLSearchParams(window.location.search);
 
-    const themeParam = params.get('theme');
+    globalThis.themeParam = params.get('theme');
 
     let colour1, colour2;
     if (themeParam === 'dark') {
@@ -56,13 +148,46 @@ function setupAbout() {
     aboutBody.style['background-color'] = colour1;
     aboutBody.style['color'] = colour2;
 
-    border = document.getElementById('about-page-border');
-    border.style['background-color'] = colour2
+    border = document.getElementById('header-border');
+    border.style['background-color'] = colour2;
 }
 
-async function fetchData() {
+function setupSitemap() {
+    const params = new URLSearchParams(window.location.search);
+
+    globalThis.themeParam = params.get('theme');
+
+    let colour1, colour2;
+    if (themeParam === 'dark') {
+        colour1 = 'rgb(40, 40, 40)';
+        colour2 = 'rgb(170, 170, 170)';
+    }
+    else if(themeParam === 'light') {
+        colour1 = 'rgb(255, 255, 255)';
+        colour2 = 'rgb(0, 0, 0)';
+    }
+    else {
+        if(window.matchMedia("(prefers-color-scheme: dark)").matches) {
+            colour1 = 'rgb(40, 40, 40)';
+            colour2 = 'rgb(170, 170, 170)';
+        }
+        else {
+            colour1 = 'rgb(255, 255, 255)';
+            colour2 = 'rgb(0, 0, 0)';
+        }
+    }
+
+    sitemapBody = document.getElementById('sitemap-body');
+    sitemapBody.style['background-color'] = colour1;
+    sitemapBody.style['color'] = colour2;
+
+    border = document.getElementById('header-border');
+    border.style['background-color'] = colour2;
+}
+
+async function fetchPokemonData() { // index page only
     const didYou = document.getElementById('didYou');
-    if (didYou !== null) { didYou.remove(); }
+    if (didYou !== null) {didYou.remove();}
     document.querySelectorAll('.meanText').forEach(el => el.remove());
 
     document.getElementById('fetchText').textContent = 'Fetching data...';
@@ -340,22 +465,32 @@ async function fetchData() {
 
                     nextEvoName = evolutionData.chain.evolves_to[i].species.name;
 
-                    bestScore = 0
-                    for(const item of pokemonList) {
-                        if(!item.includes('-mega') && !item.includes('-gmax')) {
-                            currentScore = similarityScore(item, nextEvoName);
-                            if(currentScore > bestScore) {
-                                closestName = item;
+                    try {
+                        nextEvoResponse = await fetch(`https://pokeapi.co/api/v2/pokemon/${nextEvoName}`);
+                        if (!nextEvoResponse.ok) {
+                            throw new Error('Could not fetch previous-evolution data');
+                        }
+                        nextEvoData = await nextEvoResponse.json();
+                    }
+                    catch(error) {
+                        let bestScore = 0
+                        let currentScore, closestName;
+                        for(const item of pokemonList) {
+                            if(!item.includes('-mega') && !item.includes('-gmax')) {
+                                currentScore = similarityScore(item, nextEvoName);
+                                if(currentScore > bestScore) {
+                                    closestName = item;
+                                }
                             }
                         }
+                        nextEvoName = closestName;
+                    
+                        nextEvoResponse = await fetch(`https://pokeapi.co/api/v2/pokemon/${nextEvoName}`);
+                        if (!nextEvoResponse.ok) {
+                            throw new Error('Could not fetch previous-evolution data');
+                        }
+                        nextEvoData = await nextEvoResponse.json();
                     }
-                    nextEvoName = closestName;
-
-                    nextEvoResponse = await fetch(`https://pokeapi.co/api/v2/pokemon/${nextEvoName}`);
-                    if (!nextEvoResponse.ok) {
-                        throw new Error('Could not fetch next-evolution data');
-                    }
-                    nextEvoData = await nextEvoResponse.json();
 
                     nextEvoNameTypeDiv.classList.add('nextEvosContent', 'name-type-container');
                     nextEvosContainer.appendChild(nextEvoNameTypeDiv);
@@ -368,7 +503,7 @@ async function fetchData() {
                     nextEvoType1HTML.classList.add('nextEvosContent');
                     nextEvoType1 = nextEvoData.types[0].type.name.charAt(0).toUpperCase() + nextEvoData.types[0].type.name.substring(1);
                     nextEvoType1HTML.src = `images/pokemon_types/Type_${nextEvoType1}_HOME.webp`;
-                    nextEvoType1HTML.title = `${preEvoType1} type`;
+                    nextEvoType1HTML.title = `${nextEvoType1} type`;
                     nextEvoNameTypeDiv.appendChild(nextEvoType1HTML);
 
                     if (nextEvoData.types.length === 2) {
@@ -417,23 +552,33 @@ async function fetchData() {
                     if (evolutionData.chain.evolves_to[i].species.name === speciesName) {
                         let preEvoName = evolutionData.chain.species.name;
 
-                        let bestScore = 0
-                        let currentScore, closestName;
-                        for(const item of pokemonList) {
-                            if(!item.includes('-mega') && !item.includes('-gmax')) {
-                                currentScore = similarityScore(item, preEvoName);
-                                if(currentScore > bestScore) {
-                                    closestName = item;
+                        let preEvoData;
+                        try {
+                            const preEvoResponse = await fetch(`https://pokeapi.co/api/v2/pokemon/${preEvoName}`);
+                            if (!preEvoResponse.ok) {
+                                throw new Error('Could not fetch previous-evolution data');
+                            }
+                            preEvoData = await preEvoResponse.json();
+                        }
+                        catch(error) {
+                            let bestScore = 0
+                            let currentScore, closestName;
+                            for(const item of pokemonList) {
+                                if(!item.includes('-mega') && !item.includes('-gmax')) {
+                                    currentScore = similarityScore(item, preEvoName);
+                                    if(currentScore > bestScore) {
+                                        closestName = item;
+                                    }
                                 }
                             }
+                            preEvoName = closestName;
+                        
+                            const preEvoResponse = await fetch(`https://pokeapi.co/api/v2/pokemon/${preEvoName}`);
+                            if (!preEvoResponse.ok) {
+                                throw new Error('Could not fetch previous-evolution data');
+                            }
+                            preEvoData = await preEvoResponse.json();
                         }
-                        preEvoName = closestName;
-
-                        const preEvoResponse = await fetch(`https://pokeapi.co/api/v2/pokemon/${preEvoName}`);
-                        if (!preEvoResponse.ok) {
-                            throw new Error('Could not fetch previous-evolution data');
-                        }
-                        const preEvoData = await preEvoResponse.json();
 
                         preEvoText.style.display = 'block';
 
@@ -509,22 +654,32 @@ async function fetchData() {
 
                                 nextEvoName = evolutionData.chain.evolves_to[i].evolves_to[j].species.name;
 
-                                bestScore = 0
-                                for(const item of pokemonList) {
-                                    if(!item.includes('-mega') && !item.includes('-gmax')) {
-                                        currentScore = similarityScore(item, nextEvoName);
-                                        if(currentScore > bestScore) {
-                                            closestName = item;
+                                try {
+                                    nextEvoResponse = await fetch(`https://pokeapi.co/api/v2/pokemon/${nextEvoName}`);
+                                    if (!nextEvoResponse.ok) {
+                                        throw new Error('Could not fetch previous-evolution data');
+                                    }
+                                    nextEvoData = await nextEvoResponse.json();
+                                }
+                                catch(error) {
+                                    let bestScore = 0
+                                    let currentScore, closestName;
+                                    for(const item of pokemonList) {
+                                        if(!item.includes('-mega') && !item.includes('-gmax')) {
+                                            currentScore = similarityScore(item, nextEvoName);
+                                            if(currentScore > bestScore) {
+                                                closestName = item;
+                                            }
                                         }
                                     }
+                                    nextEvoName = closestName;
+                                
+                                    nextEvoResponse = await fetch(`https://pokeapi.co/api/v2/pokemon/${nextEvoName}`);
+                                    if (!nextEvoResponse.ok) {
+                                        throw new Error('Could not fetch previous-evolution data');
+                                    }
+                                    const nextEvoData = await nextEvoResponse.json();
                                 }
-                                nextEvoName = closestName;
-
-                                nextEvoResponse = await fetch(`https://pokeapi.co/api/v2/pokemon/${nextEvoName}`);
-                                if (!nextEvoResponse.ok) {
-                                    throw new Error('Could not fetch next-evolution data');
-                                }
-                                nextEvoData = await nextEvoResponse.json();
 
                                 nextEvoNameTypeDiv.classList.add('nextEvosContent', 'name-type-container');
                                 nextEvosContainer.appendChild(nextEvoNameTypeDiv);
@@ -537,7 +692,7 @@ async function fetchData() {
                                 nextEvoType1HTML.classList.add('nextEvosContent');
                                 nextEvoType1 = nextEvoData.types[0].type.name.charAt(0).toUpperCase() + nextEvoData.types[0].type.name.substring(1);
                                 nextEvoType1HTML.src = `images/pokemon_types/Type_${nextEvoType1}_HOME.webp`;
-                                nextEvoType1HTML.title = `${preEvoType1} type`;
+                                nextEvoType1HTML.title = `${nextEvoType1} type`;
                                 nextEvoNameTypeDiv.appendChild(nextEvoType1HTML);
 
                                 if (nextEvoData.types.length === 2) {
@@ -589,23 +744,33 @@ async function fetchData() {
                             if (evolutionData.chain.evolves_to[i].evolves_to[j].species.name === speciesName) {
                                 let preEvoName = evolutionData.chain.evolves_to[i].species.name;
 
-                                let bestScore = 0
-                                let currentScore, closestName;
-                                for(const item of pokemonList) {
-                                    if(!item.includes('-mega') && !item.include('-gmax')) {
-                                        currentScore = similarityScore(item, preEvoName);
-                                        if(currentScore > bestScore) {
-                                            closestName = item;
+                                let preEvoData;
+                                try {
+                                    const preEvoResponse = await fetch(`https://pokeapi.co/api/v2/pokemon/${preEvoName}`);
+                                    if (!preEvoResponse.ok) {
+                                        throw new Error('Could not fetch previous-evolution data');
+                                    }
+                                    preEvoData = await preEvoResponse.json();
+                                }
+                                catch(error) {
+                                    let bestScore = 0
+                                    let currentScore, closestName;
+                                    for(const item of pokemonList) {
+                                        if(!item.includes('-mega') && !item.includes('-gmax')) {
+                                            currentScore = similarityScore(item, preEvoName);
+                                            if(currentScore > bestScore) {
+                                                closestName = item;
+                                            }
                                         }
                                     }
-                                }
-                                preEvoName = closestName;
+                                    preEvoName = closestName;
 
-                                const preEvoResponse = await fetch(`https://pokeapi.co/api/v2/pokemon/${preEvoName}`);
-                                if (!preEvoResponse.ok) {
-                                    throw new Error('Could not fetch previous-evolution data');
+                                    const preEvoResponse = await fetch(`https://pokeapi.co/api/v2/pokemon/${preEvoName}`);
+                                    if (!preEvoResponse.ok) {
+                                        throw new Error('Could not fetch previous-evolution data');
+                                    }
+                                    preEvoData = await preEvoResponse.json();
                                 }
-                                const preEvoData = await preEvoResponse.json();
 
                                 preEvoText.style.display = 'block';
 
@@ -729,7 +894,7 @@ async function fetchData() {
 
             const inputtedName = document.getElementById('pokemonInput').value.toLowerCase().replace(" ", "-");
 
-            const top3ClosestPokemonNames = await get3ClosestPokemonNames(inputtedName);
+            const top3ClosestPokemonNames = await get3ClosestNames(inputtedName);
 
             const didYouContainer = document.getElementById('didYou-container');
             let newP;
@@ -750,9 +915,1121 @@ async function fetchData() {
     }
 }
 
-function fetchNewInput(text) {
+async function fetchNewInput(text) { // index page only
     document.getElementById('pokemonInput').value = text;
-    fetchData();
+    await fetchPokemonData();
+}
+
+async function fetchLocationData() { // /locations/ page only
+    const didYou = document.getElementById('didYou');
+    if (didYou !== null) {didYou.remove();}
+    document.querySelectorAll('.meanText').forEach(el => el.remove());
+    document.querySelectorAll('.locationsContent').forEach(el => el.remove());
+
+    document.getElementById('regionInput').value = '';
+    document.getElementById('areaInput').value = '';
+
+    document.getElementById('fetchText').textContent = 'Fetching data...';
+    try {
+        const locationName = document.getElementById('locationInput').value.toLowerCase().replace(" ", "-");
+
+        params.set('location', locationName);
+        if(regionParam) {
+            params.delete('region');
+        }
+        if(areaParam) {
+            params.delete('area');
+        }
+        const newUrl = `${window.location.pathname}?${params.toString()}`;
+        window.history.pushState({}, "", newUrl);
+
+        const response = await fetch(`https://pokeapi.co/api/v2/location/${locationName}`);
+
+        if (response.status === 404) {
+            throw new Error('Location not found');
+        }
+        if (!response.ok) {
+            throw new Error('Could not fetch data');
+        }
+        document.getElementById('fetchText').textContent = 'Data fetched successfully';
+
+        globalThis.locationData = await response.json();
+
+        const locationsContainer = document.getElementById('locations-container');
+
+        let newH2, newDiv;
+        newH2 = document.createElement('h2');
+        newH2.classList.add('text', 'clickable', 'locationText', 'locationsContent');
+        newH2.textContent = `${locationData.name}:`;
+        newH2.setAttribute('onclick', `
+        const locationContainer = document.getElementById('location-container');
+            switch(locationContainer.style.display) {
+                case('none'): 
+                    locationContainer.style.display = 'block'; break;
+                default: 
+                    locationContainer.style.display = 'none'; break;
+            }`
+        );
+        locationsContainer.appendChild(newH2);
+
+        newDiv = document.createElement('div');
+        newDiv.classList.add('locationsContent');
+        newDiv.id = 'location-container';
+        locationsContainer.appendChild(newDiv);
+        const locationContainer = document.getElementById('location-container');
+
+        for(const area of locationData.areas) {
+            newH2 = document.createElement('h2');
+            newH2.classList.add('text', 'clickable', 'areaText', 'locationsContent');
+            newH2.textContent = `${area.name}:`;
+            newH2.setAttribute('onclick', `areaClicked('${area.name}');`);
+            locationContainer.appendChild(newH2);
+
+            newDiv = document.createElement('div');
+            newDiv.classList.add('locationsContent');
+            newDiv.id = `${area.name}-container`;
+            newDiv.style.display = 'none';
+            locationContainer.appendChild(newDiv);
+        }
+    }
+    catch(error) {
+        console.error(error);
+        document.getElementById('fetchText').textContent = 'Could not fetch data';
+
+        if (error.message === 'Location not found') {
+            const didYou = document.getElementById('didYou');
+
+            if (didYou !== null) { didYou.remove(); }
+            document.querySelectorAll('.meanText').forEach(el => el.remove());
+
+            const inputtedName = document.getElementById('locationInput').value.toLowerCase().replace(" ", "-");
+
+            const top3ClosestLocationNames = await get3ClosestNames(inputtedName, 'locations');
+
+            const didYouContainer = document.getElementById('didYou-container');
+            let newP;
+            newP = document.createElement('p');
+            newP.id = 'didYou';
+            newP.textContent = 'did you mean?:';
+            didYouContainer.appendChild(newP);
+
+            for (const name of top3ClosestLocationNames) {
+                newP = document.createElement('p');
+                newP.classList.add('meanText', 'clickable');
+                newP.id = name;
+                newP.textContent = name;
+                didYouContainer.appendChild(newP);
+                newP.setAttribute('onclick', `fetchNewLocationInput(\'${name}\'); window.scrollTo(0, 0); document.getElementById(\'didYou\').remove(); document.querySelectorAll(\'.meanText\').forEach(el => el.remove());`);
+            }
+        }
+    }
+}
+
+async function fetchNewLocationInput(text) { // /locations/ page only
+    document.getElementById('locationInput').value = text;
+    await fetchLocationData();
+}
+
+async function fetchAreaData() { // /locations/ page only
+    const didYou = document.getElementById('didYou');
+    if (didYou !== null) {didYou.remove();}
+    document.querySelectorAll('.meanText').forEach(el => el.remove());
+    document.querySelectorAll('.locationsContent').forEach(el => el.remove());
+
+    document.getElementById('locationInput').value = '';
+    document.getElementById('regionInput').value = '';
+
+    document.getElementById('fetchText').textContent = 'Fetching data...';
+    try {
+        const areaName = document.getElementById('areaInput').value.toLowerCase().replace(" ", "-");
+
+        params.set('area', areaName);
+        if(locationParam) {
+            params.delete('location');
+        }
+        if(regionParam) {
+            params.delete('region');
+        }
+        const newUrl = `${window.location.pathname}?${params.toString()}`;
+        window.history.pushState({}, "", newUrl);
+
+        const response = await fetch(`https://pokeapi.co/api/v2/location-area/${areaName}`);
+
+        if (response.status === 404) {
+            throw new Error('Area not found');
+        }
+        if (!response.ok) {
+            throw new Error('Could not fetch data');
+        }
+        document.getElementById('fetchText').textContent = 'Data fetched successfully';
+
+        globalThis.areaData = await response.json();
+
+        const locationsContainer = document.getElementById('locations-container');
+
+        let newH2, newDiv;
+        newH2 = document.createElement('h2');
+        newH2.classList.add('text', 'clickable', 'areaText', 'locationsContent');
+        newH2.textContent = `${areaData.name}:`;
+        newH2.setAttribute('onclick', `
+        const locationContainer = document.getElementById('area-container');
+            switch(locationContainer.style.display) {
+                case('none'): 
+                    locationContainer.style.display = 'block'; break;
+                default: 
+                    locationContainer.style.display = 'none'; break;
+            }`
+        );
+        locationsContainer.appendChild(newH2);
+
+        newDiv = document.createElement('div');
+        newDiv.classList.add('locationsContent');
+        newDiv.id = 'area-container';
+        locationsContainer.appendChild(newDiv);
+        const areaContainer = document.getElementById('area-container');
+
+        newH2 = document.createElement('h2');
+        newH2.classList.add('title-text', 'clickable', 'locationsContent');
+        newH2.textContent = 'Encounters:';
+        newH2.setAttribute('onclick', `switch(document.getElementById('area-encounters-container').style.display) {
+        case('none'): document.getElementById('area-encounters-container').style.display = 'block'; break;
+        default: document.getElementById('area-encounters-container').style.display = 'none'; break;
+        }`);
+        areaContainer.appendChild(newH2);
+
+        newDiv = document.createElement('div');
+        newDiv.id = `area-encounters-container`;
+        newDiv.classList.add('locationsContent');
+        areaContainer.appendChild(newDiv);
+        const encounterContainer = document.getElementById(`area-encounters-container`);
+
+        let encounterNameTypeDiv, encounterNameHTML, encounterType1HTML, encounterType2HTML, encounterSpeciesHTML, encounterImg, encounterPokedexNrHTML;
+        let encounterName, encounterResponse, encounterData, encounterType1, encounterType2, encounterSpeciesResponse, encounterSpeciesData, encounterSpecies, encounterPokedexNr;
+        let gamesText, gamesContainer, gameText, gameContainer, maxEncounterChanceText, encounterChanceText, encounterMethodText;
+        for(const encounter of areaData.pokemon_encounters) {
+            encounterNameTypeDiv = document.createElement('div');
+            encounterNameHTML = document.createElement('h2');
+            encounterType1HTML = document.createElement('img');
+            encounterType2HTML = document.createElement('img');
+            encounterSpeciesHTML = document.createElement('h2');
+            encounterImg = document.createElement('img');
+            encounterPokedexNrHTML = document.createElement('h2');
+            
+            encounterName = encounter.pokemon.name;
+            encounterUrl = encounter.pokemon.url;
+
+            encounterResponse = await fetch(encounterUrl);
+            if (!encounterResponse.ok) {
+                throw new Error(`Could not fetch encounter '${encounterName}' data`);
+            }
+            encounterData = await encounterResponse.json();
+
+            encounterNameTypeDiv.classList.add('locationsContent', 'name-type-container');
+            encounterContainer.appendChild(encounterNameTypeDiv);
+
+            encounterNameHTML.classList.add('locationsContent', 'text', 'pokemonName', 'clickable')
+            encounterNameHTML.textContent = encounterName.charAt(0).toUpperCase() + encounterName.substring(1);
+            encounterNameHTML.setAttribute('onclick', `window.location.href = 'https://simonkamon11.github.io/monkadex/?pokemon=${encounterName}'`);
+            encounterNameTypeDiv.appendChild(encounterNameHTML);
+
+            encounterType1HTML.classList.add('locationsContent');
+            encounterType1 = encounterData.types[0].type.name.charAt(0).toUpperCase() + encounterData.types[0].type.name.substring(1);
+            encounterType1HTML.src = `../images/pokemon_types/Type_${encounterType1}_HOME.webp`;
+            encounterType1HTML.title = `${encounterType1} type`;
+            encounterNameTypeDiv.appendChild(encounterType1HTML);
+
+            if (encounterData.types.length === 2) {
+                encounterType2HTML.classList.add('locationsContent');
+                encounterType2 = encounterData.types[1].type.name.charAt(0).toUpperCase() + encounterData.types[1].type.name.substring(1);
+                encounterType2HTML.src = `../images/pokemon_types/Type_${encounterType2}_HOME.webp`;
+                encounterType2HTML.title = `${encounterType2HTML} type`;
+                encounterNameTypeDiv.appendChild(encounterType2HTML);
+            }
+
+            encounterSpeciesResponse = await fetch(encounterData.species.url);
+            if (!encounterSpeciesResponse.ok) {
+                throw new Error(`Could not fetch encounter '${encounterName}' species data`);
+            }
+            encounterSpeciesData = await encounterSpeciesResponse.json();
+
+            for (const item of encounterSpeciesData.genera) {
+                if (item.language.name === 'en') {
+                    encounterSpecies = item.genus;
+                    break;
+                }
+            }
+            encounterSpeciesHTML.classList.add('nextEvosContent', 'text', 'pokemonSpecies');
+            encounterSpeciesHTML.textContent = 'The ' + encounterSpecies;
+            encounterContainer.appendChild(encounterSpeciesHTML);
+
+            encounterImg.classList.add('locationsContent', 'pokemonImages');
+            encounterImg.src = encounterData.sprites.front_default;
+            encounterImg.title = `${encounterName.charAt(0).toUpperCase() + encounterName.substring(1)} (next evolution) sprite`;
+            encounterContainer.appendChild(encounterImg);
+            switchTheme(usingTheme); // Updating the theme, so the image has the correct colour
+
+            for (const item of encounterSpeciesData.pokedex_numbers) {
+                if (item.pokedex.name === 'national') {
+                    encounterPokedexNr = item.entry_number;
+                    break;
+                }
+            }
+            encounterPokedexNrHTML.classList.add('locationsContent', 'text', 'pokedexNr');
+            encounterPokedexNrHTML.textContent = `Pokédex Nr. ${encounterPokedexNr}`;
+            encounterContainer.appendChild(encounterPokedexNrHTML);
+
+            gamesText = document.createElement('h2');
+            gamesText.classList.add('text', 'clickable', 'gamesText', 'locationsContent')
+            gamesText.setAttribute('onclick', `
+            switch(document.getElementById('area-${encounterName}-games-container').style.display) {
+                case('none'): document.getElementById('area-${encounterName}-games-container').style.display = 'block'; break;
+                default: document.getElementById('area-${encounterName}-games-container').style.display = 'none'; break;
+            }`);
+            if(encounter.version_details.length === 1) {
+                gamesText.textContent = 'Game:';
+            }
+            else {
+                gamesText.textContent = 'Games:';
+            }
+            encounterContainer.appendChild(gamesText);
+
+            newDiv = document.createElement('div');
+            newDiv.id = `area-${encounterName}-games-container`;
+            newDiv.classList.add('locationsContent');
+            encounterContainer.appendChild(newDiv);
+            gamesContainer = document.getElementById(`area-${encounterName}-games-container`)
+
+            for(const versionDetail of encounter.version_details) {
+                gameText = document.createElement('h2');
+                gameText.classList.add('text', 'clickable', 'gameText', 'locationsContent');
+                gameText.setAttribute('onclick', `
+                switch(document.getElementById('area-${encounterName}-${versionDetail.version.name}-container').style.display) {
+                    case('none'): document.getElementById('area-${encounterName}-${versionDetail.version.name}-container').style.display = 'block'; break;
+                    default: document.getElementById('area-${encounterName}-${versionDetail.version.name}-container').style.display = 'none'; break;
+                }`);
+                gameText.textContent = `${versionDetail.version.name}:`;
+                gamesContainer.appendChild(gameText);
+
+                newDiv = document.createElement('div');
+                newDiv.id = `area-${encounterName}-${versionDetail.version.name}-container`;
+                newDiv.classList.add('locationsContent');
+                gamesContainer.appendChild(newDiv);
+                gameContainer = document.getElementById(`area-${encounterName}-${versionDetail.version.name}-container`);
+
+                maxEncounterChanceText = document.createElement('h2');
+                maxEncounterChanceText.classList.add('text', 'maxEncounterChanceText', 'locationsContent');
+                maxEncounterChanceText.textContent = `Max encounter chance: ${versionDetail.max_chance}%`;
+                gameContainer.appendChild(maxEncounterChanceText);
+
+                for(const encounterDetail of versionDetail.encounter_details) {
+                    encounterChanceText = document.createElement('h2');
+                    encounterChanceText.classList.add('text', 'encounterChanceText', 'locationsContent');
+                    encounterChanceText.textContent = `Encounter chance: ${encounterDetail.chance}%`;
+                    gameContainer.appendChild(encounterChanceText);
+
+                    encounterMethodText = document.createElement('h2');
+                    encounterMethodText.classList.add('text', 'encounterMethodText', 'locationsContent');
+                    encounterMethodText.textContent = `Encounter method: ${encounterDetail.method.name}`;
+                    gameContainer.appendChild(encounterMethodText);
+                }
+            }
+        }
+    }
+    catch(error) {
+        console.error(error);
+        document.getElementById('fetchText').textContent = 'Could not fetch data';
+
+        if (error.message === 'Area not found') {
+            const didYou = document.getElementById('didYou');
+
+            if (didYou !== null) { didYou.remove(); }
+            document.querySelectorAll('.meanText').forEach(el => el.remove());
+
+            const inputtedName = document.getElementById('areaInput').value.toLowerCase().replace(" ", "-");
+
+            const top3ClosestLocationNames = await get3ClosestNames(inputtedName, 'areas');
+
+            const didYouContainer = document.getElementById('didYou-container');
+            let newP;
+            newP = document.createElement('p');
+            newP.id = 'didYou';
+            newP.textContent = 'did you mean?:';
+            didYouContainer.appendChild(newP);
+
+            for (const name of top3ClosestLocationNames) {
+                newP = document.createElement('p');
+                newP.classList.add('meanText', 'clickable');
+                newP.id = name;
+                newP.textContent = name;
+                didYouContainer.appendChild(newP);
+                newP.setAttribute('onclick', `fetchNewAreaInput(\'${name}\'); window.scrollTo(0, 0); document.getElementById(\'didYou\').remove(); document.querySelectorAll(\'.meanText\').forEach(el => el.remove());`);
+            }
+        }
+    }
+}
+
+async function fetchNewAreaInput(text) { // /locations/ page only
+    document.getElementById('areaInput').value = text;
+    await fetchAreaData();
+}
+
+async function fetchRegionData() { // /locations/ page only
+    const didYou = document.getElementById('didYou');
+    if (didYou !== null) {didYou.remove();}
+    document.querySelectorAll('.meanText').forEach(el => el.remove());
+    document.querySelectorAll('.locationsContent').forEach(el => el.remove());
+
+    document.getElementById('locationInput').value = '';
+    document.getElementById('areaInput').value = '';
+
+    document.getElementById('fetchText').textContent = 'Fetching data...';
+    try {
+        const regionName = document.getElementById('regionInput').value.toLowerCase().replace(" ", "-");
+
+        params.set('region', regionName);
+        if(locationParam) {
+            params.delete('location');
+        }
+        if(areaParam) {
+            params.delete('area');
+        }
+        const newUrl = `${window.location.pathname}?${params.toString()}`;
+        window.history.pushState({}, "", newUrl);
+
+        const response = await fetch(`https://pokeapi.co/api/v2/region/${regionName}`);
+
+        if (response.status === 404) {
+            throw new Error('Region not found');
+        }
+        if (!response.ok) {
+            throw new Error('Could not fetch data');
+        }
+        document.getElementById('fetchText').textContent = 'Data fetched successfully';
+
+        globalThis.regionData = await response.json();
+
+        const locationsContainer = document.getElementById('locations-container');
+
+        let newH2, newDiv;
+        newH2 = document.createElement('h2');
+        newH2.classList.add('text', 'clickable', 'regionText', 'locationsContent');
+        newH2.textContent = `${regionData.name}:`;
+        newH2.setAttribute('onclick', `
+        const regionContainer = document.getElementById('region-container');
+            switch(regionContainer.style.display) {
+                case('none'): 
+                    regionContainer.style.display = 'block'; break;
+                default: 
+                    regionContainer.style.display = 'none'; break;
+            }`
+        );
+        locationsContainer.appendChild(newH2);
+
+        newDiv = document.createElement('div');
+        newDiv.classList.add('locationsContent');
+        newDiv.id = 'region-container';
+        locationsContainer.appendChild(newDiv);
+        const regionContainer = document.getElementById('region-container');
+
+        for(const location of regionData.locations) {
+            newH2 = document.createElement('h2');
+            newH2.classList.add('text', 'clickable', 'locationText', 'locationsContent');
+            newH2.textContent = `${location.name}:`;
+            newH2.setAttribute('onclick', `locationClicked('${location.name}');`);
+            regionContainer.appendChild(newH2);
+
+            newDiv = document.createElement('div');
+            newDiv.classList.add('locationsContent');
+            newDiv.id = `${location.name}-container`;
+            newDiv.style.display = 'none';
+            regionContainer.appendChild(newDiv);
+        }
+    }
+    catch(error) {
+        console.error(error);
+        document.getElementById('fetchText').textContent = 'Could not fetch data';
+
+        if (error.message === 'Region not found') {
+            const didYou = document.getElementById('didYou');
+
+            if (didYou !== null) { didYou.remove(); }
+            document.querySelectorAll('.meanText').forEach(el => el.remove());
+
+            const inputtedName = document.getElementById('regionInput').value.toLowerCase().replace(" ", "-");
+
+            const top3ClosestLocationNames = await get3ClosestNames(inputtedName, 'region');
+
+            const didYouContainer = document.getElementById('didYou-container');
+            let newP;
+            newP = document.createElement('p');
+            newP.id = 'didYou';
+            newP.textContent = 'did you mean?:';
+            didYouContainer.appendChild(newP);
+
+            for (const name of top3ClosestLocationNames) {
+                newP = document.createElement('p');
+                newP.classList.add('meanText', 'clickable');
+                newP.id = name;
+                newP.textContent = name;
+                didYouContainer.appendChild(newP);
+                newP.setAttribute('onclick', `fetchNewRegionInput(\'${name}\'); window.scrollTo(0, 0); document.getElementById(\'didYou\').remove(); document.querySelectorAll(\'.meanText\').forEach(el => el.remove());`);
+            }
+        }
+    }
+}
+
+async function fetchNewRegionInput(text) { // /locations/ page only
+    document.getElementById('regionInput').value = text;
+    fetchRegionData();
+}
+
+async function fetchRegionsData() { // /locations/ page only
+    try {
+        const regionsResponse = await fetch('https://pokeapi.co/api/v2/region/');
+        if(!regionsResponse.ok) {
+            throw new Error('Could not fetch regions data');
+        }
+        globalThis.regionsData = await regionsResponse.json();
+
+        document.querySelectorAll('.locationsContent').forEach(el => el.remove());
+        const regionsContainer = document.getElementById('locations-container');
+        let newH2, newDiv;
+        for(const region of regionsData.results) {
+            newH2 = document.createElement('h2');
+            newH2.classList.add('text', 'clickable', 'regionText', 'locationsContent');
+            newH2.textContent = `${region.name}:`;
+            newH2.setAttribute('onclick', `regionClicked('${region.name}');`);
+            regionsContainer.appendChild(newH2);
+
+            newDiv = document.createElement('div');
+            newDiv.classList.add('locationsContent');
+            newDiv.id = `${region.name}-container`;
+            newDiv.style.display = 'none';
+            regionsContainer.appendChild(newDiv);
+        }
+    }
+    catch(error) {
+        console.error(error);
+    }
+}
+
+async function regionClicked(region) { // /locations/ page only
+    const regionContainer = document.getElementById(`${region}-container`);
+    switch(regionContainer.style.display) {
+        case('none'): 
+            regionContainer.style.display = 'block'; 
+            break;
+        default: 
+            regionContainer.style.display = 'none'; 
+            break;
+    }
+
+    let regionUrl;
+    if(!regionContainer.hasChildNodes()) {
+        for(const item of regionsData.results) {
+            if(item.name === region) {
+                regionUrl = item.url;
+                break;
+            }
+        }
+
+        const regionResponse = await fetch(regionUrl);
+        if(!regionResponse.ok) {
+            throw new Error(`Could not fetch region '${region}' data`);
+        }
+        globalThis.regionData = await regionResponse.json();
+
+        let newH2, newDiv;
+        for(const location of regionData.locations) {
+            newH2 = document.createElement('h2');
+            newH2.classList.add('text', 'clickable', 'locationText', 'locationsContent');
+            newH2.textContent = `${location.name}:`;
+            newH2.setAttribute('onclick', `locationClicked('${location.name}');`);
+            regionContainer.appendChild(newH2);
+
+            newDiv = document.createElement('div');
+            newDiv.classList.add('locationsContent');
+            newDiv.id = `${location.name}-container`;
+            newDiv.style.display = 'none';
+            regionContainer.appendChild(newDiv);
+        }
+    }
+}
+
+async function locationClicked(location) { // /locations/ page only
+    const locationContainer = document.getElementById(`${location}-container`);
+    switch(locationContainer.style.display) {
+        case('none'): 
+            locationContainer.style.display = 'block'; 
+            break;
+        default: 
+            locationContainer.style.display = 'none'; 
+            break;
+    }
+
+    let locationUrl;
+    if(!locationContainer.hasChildNodes()) {
+        for(const item of regionData.locations) {
+            if(item.name === location) {
+                locationUrl = item.url;
+                break;
+            }
+        }
+
+        const locationResponse = await fetch(locationUrl);
+        if(!locationResponse.ok) {
+            throw new Error(`Could not fetch region '${location}' data`);
+        }
+        globalThis.locationData = await locationResponse.json();
+
+        let newH2, newDiv;
+        for(const area of locationData.areas) {
+            newH2 = document.createElement('h2');
+            newH2.classList.add('text', 'clickable', 'areaText', 'locationsContent');
+            newH2.textContent = `${area.name}:`;
+            newH2.setAttribute('onclick', `areaClicked('${area.name}');`);
+            locationContainer.appendChild(newH2);
+
+            newDiv = document.createElement('div');
+            newDiv.classList.add('locationsContent');
+            newDiv.id = `${area.name}-container`;
+            newDiv.style.display = 'none';
+            locationContainer.appendChild(newDiv);
+        }
+    }
+}
+
+async function areaClicked(area) { // /locations/ page only
+    const areaContainer = document.getElementById(`${area}-container`);
+    switch(areaContainer.style.display) {
+        case('none'): 
+            areaContainer.style.display = 'block'; 
+            break;
+        default: 
+            areaContainer.style.display = 'none'; 
+            break;
+    }
+
+    let areaUrl;
+    if(!areaContainer.hasChildNodes()) {
+        for(const item of locationData.areas) {
+            if(item.name === area) {
+                areaUrl = item.url;
+                break;
+            }
+        }
+
+        const areaResponse = await fetch(areaUrl);
+        if(!areaResponse.ok) {
+            throw new Error(`Could not fetch region '${area}' data`);
+        }
+        const areaData = await areaResponse.json();
+
+        let newH2, newDiv;
+        newH2 = document.createElement('h2');
+        newH2.classList.add('title-text', 'clickable', 'locationsContent');
+        newH2.textContent = 'Encounters:';
+        newH2.setAttribute('onclick', `switch(document.getElementById('${area}-encounters-container').style.display) {
+        case('none'): document.getElementById('${area}-encounters-container').style.display = 'block'; break;
+        default: document.getElementById('${area}-encounters-container').style.display = 'none'; break;
+        }`);
+        areaContainer.appendChild(newH2);
+
+        newDiv = document.createElement('div');
+        newDiv.id = `${area}-encounters-container`;
+        newDiv.classList.add('locationsContent');
+        areaContainer.appendChild(newDiv);
+        const encounterContainer = document.getElementById(`${area}-encounters-container`);
+
+        let encounterNameTypeDiv, encounterNameHTML, encounterType1HTML, encounterType2HTML, encounterSpeciesHTML, encounterImg, encounterPokedexNrHTML;
+        let encounterName, encounterResponse, encounterData, encounterType1, encounterType2, encounterSpeciesResponse, encounterSpeciesData, encounterSpecies, encounterPokedexNr;
+        let gamesText, gamesContainer, gameText, gameContainer, maxEncounterChanceText, encounterChanceText, encounterMethodText;
+        for(const encounter of areaData.pokemon_encounters) {
+            encounterNameTypeDiv = document.createElement('div');
+            encounterNameHTML = document.createElement('h2');
+            encounterType1HTML = document.createElement('img');
+            encounterType2HTML = document.createElement('img');
+            encounterSpeciesHTML = document.createElement('h2');
+            encounterImg = document.createElement('img');
+            encounterPokedexNrHTML = document.createElement('h2');
+            
+            encounterName = encounter.pokemon.name;
+            encounterUrl = encounter.pokemon.url;
+
+            encounterResponse = await fetch(encounterUrl);
+            if (!encounterResponse.ok) {
+                throw new Error(`Could not fetch encounter '${encounterName}' data`);
+            }
+            encounterData = await encounterResponse.json();
+
+            encounterNameTypeDiv.classList.add('locationsContent', 'name-type-container');
+            encounterContainer.appendChild(encounterNameTypeDiv);
+
+            encounterNameHTML.classList.add('locationsContent', 'text', 'pokemonName', 'clickable')
+            encounterNameHTML.textContent = encounterName.charAt(0).toUpperCase() + encounterName.substring(1);
+            encounterNameHTML.setAttribute('onclick', `window.location.href = 'https://simonkamon11.github.io/monkadex/?pokemon=${encounterName}'`);
+            encounterNameTypeDiv.appendChild(encounterNameHTML);
+
+            encounterType1HTML.classList.add('locationsContent');
+            encounterType1 = encounterData.types[0].type.name.charAt(0).toUpperCase() + encounterData.types[0].type.name.substring(1);
+            encounterType1HTML.src = `../images/pokemon_types/Type_${encounterType1}_HOME.webp`;
+            encounterType1HTML.title = `${encounterType1} type`;
+            encounterNameTypeDiv.appendChild(encounterType1HTML);
+
+            if (encounterData.types.length === 2) {
+                encounterType2HTML.classList.add('locationsContent');
+                encounterType2 = encounterData.types[1].type.name.charAt(0).toUpperCase() + encounterData.types[1].type.name.substring(1);
+                encounterType2HTML.src = `../images/pokemon_types/Type_${encounterType2}_HOME.webp`;
+                encounterType2HTML.title = `${encounterType2HTML} type`;
+                encounterNameTypeDiv.appendChild(encounterType2HTML);
+            }
+
+            encounterSpeciesResponse = await fetch(encounterData.species.url);
+            if (!encounterSpeciesResponse.ok) {
+                throw new Error(`Could not fetch encounter '${encounterName}' species data`);
+            }
+            encounterSpeciesData = await encounterSpeciesResponse.json();
+
+            for (const item of encounterSpeciesData.genera) {
+                if (item.language.name === 'en') {
+                    encounterSpecies = item.genus;
+                    break;
+                }
+            }
+            encounterSpeciesHTML.classList.add('nextEvosContent', 'text', 'pokemonSpecies');
+            encounterSpeciesHTML.textContent = 'The ' + encounterSpecies;
+            encounterContainer.appendChild(encounterSpeciesHTML);
+
+            encounterImg.classList.add('locationsContent', 'pokemonImages');
+            encounterImg.src = encounterData.sprites.front_default;
+            encounterImg.title = `${encounterName.charAt(0).toUpperCase() + encounterName.substring(1)} (next evolution) sprite`;
+            encounterContainer.appendChild(encounterImg);
+            switchTheme(usingTheme); // Updating the theme, so the image has the correct colour
+
+            for (const item of encounterSpeciesData.pokedex_numbers) {
+                if (item.pokedex.name === 'national') {
+                    encounterPokedexNr = item.entry_number;
+                    break;
+                }
+            }
+            encounterPokedexNrHTML.classList.add('locationsContent', 'text', 'pokedexNr');
+            encounterPokedexNrHTML.textContent = `Pokédex Nr. ${encounterPokedexNr}`;
+            encounterContainer.appendChild(encounterPokedexNrHTML);
+
+            gamesText = document.createElement('h2');
+            gamesText.classList.add('text', 'clickable', 'gamesText', 'locationsContent')
+            gamesText.setAttribute('onclick', `
+            switch(document.getElementById('${area}-${encounterName}-games-container').style.display) {
+                case('none'): document.getElementById('${area}-${encounterName}-games-container').style.display = 'block'; break;
+                default: document.getElementById('${area}-${encounterName}-games-container').style.display = 'none'; break;
+            }`);
+            if(encounter.version_details.length === 1) {
+                gamesText.textContent = 'Game:';
+            }
+            else {
+                gamesText.textContent = 'Games:';
+            }
+            encounterContainer.appendChild(gamesText);
+
+            newDiv = document.createElement('div');
+            newDiv.id = `${area}-${encounterName}-games-container`;
+            newDiv.classList.add('locationsContent');
+            encounterContainer.appendChild(newDiv);
+            gamesContainer = document.getElementById(`${area}-${encounterName}-games-container`)
+
+            for(const versionDetail of encounter.version_details) {
+                gameText = document.createElement('h2');
+                gameText.classList.add('text', 'clickable', 'gameText', 'locationsContent');
+                gameText.setAttribute('onclick', `
+                switch(document.getElementById('${area}-${encounterName}-${versionDetail.version.name}-container').style.display) {
+                    case('none'): document.getElementById('${area}-${encounterName}-${versionDetail.version.name}-container').style.display = 'block'; break;
+                    default: document.getElementById('${area}-${encounterName}-${versionDetail.version.name}-container').style.display = 'none'; break;
+                }`);
+                gameText.textContent = `${versionDetail.version.name}:`;
+                gamesContainer.appendChild(gameText);
+
+                newDiv = document.createElement('div');
+                newDiv.id = `${area}-${encounterName}-${versionDetail.version.name}-container`;
+                newDiv.classList.add('locationsContent');
+                gamesContainer.appendChild(newDiv);
+                gameContainer = document.getElementById(`${area}-${encounterName}-${versionDetail.version.name}-container`);
+
+                maxEncounterChanceText = document.createElement('h2');
+                maxEncounterChanceText.classList.add('text', 'maxEncounterChanceText', 'locationsContent');
+                maxEncounterChanceText.textContent = `Max encounter chance: ${versionDetail.max_chance}%`;
+                gameContainer.appendChild(maxEncounterChanceText);
+
+                for(const encounterDetail of versionDetail.encounter_details) {
+                    encounterChanceText = document.createElement('h2');
+                    encounterChanceText.classList.add('text', 'encounterChanceText', 'locationsContent');
+                    encounterChanceText.textContent = `Encounter chance: ${encounterDetail.chance}%`;
+                    gameContainer.appendChild(encounterChanceText);
+
+                    encounterMethodText = document.createElement('h2');
+                    encounterMethodText.classList.add('text', 'encounterMethodText', 'locationsContent');
+                    encounterMethodText.textContent = `Encounter method: ${encounterDetail.method.name}`;
+                    gameContainer.appendChild(encounterMethodText);
+                }
+            }
+        }
+    }
+}
+
+async function fetchShinyData() { // /shinytools/ page only
+    const didYou = document.getElementById('didYou');
+    if (didYou !== null) {didYou.remove();}
+    document.querySelectorAll('.meanText').forEach(el => el.remove());
+
+    document.getElementById('fetchText').textContent = 'Fetching data...';
+    try {
+        const pokemonName = document.getElementById('shinyInput').value.toLowerCase().replace(" ", "-");
+
+        params.set('pokemon', pokemonName);
+        const newUrl = `${window.location.pathname}?${params.toString()}`;
+        window.history.pushState({}, "", newUrl);
+
+        const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${pokemonName}`);
+
+        if (response.status === 404) {
+            throw new Error('Pokémon not found');
+        }
+        if (!response.ok) {
+            throw new Error('Could not fetch data');
+        }
+
+        const data = await response.json();
+
+        const speciesResponse = await fetch(data.species.url);
+        if (!speciesResponse.ok) {
+            throw new Error('Could not fetch species data');
+        }
+        document.getElementById('fetchText').textContent = 'Data fetched successfully';
+
+        const speciesData = await speciesResponse.json();
+
+        const speciesName = speciesData.name;
+
+        const shinySprite = data.sprites.front_shiny;
+
+        const name = data.name.charAt(0).toUpperCase() + data.name.substring(1)
+
+        const pokemonNameHTML = document.getElementById('pokemonName');
+        pokemonNameHTML.textContent = name;
+        pokemonNameHTML.setAttribute('onclick', `window.location.href = 'https://simonkamon11.github.io/monkadex/?pokemon=${pokemonName}'`);
+
+        const type1Img = document.getElementById('type1');
+        const type1 = data.types[0].type.name.charAt(0).toUpperCase() + data.types[0].type.name.substring(1);
+        type1Img.src = `../images/pokemon_types/Type_${type1}_HOME.webp`;
+        type1Img.style.display = 'block';
+        type1Img.title = `${type1} type`;
+
+        const type2Img = document.getElementById('type2');
+        if (data.types.length === 2) {
+            const type2 = data.types[1].type.name.charAt(0).toUpperCase() + data.types[1].type.name.substring(1);
+            type2Img.src = `../images/pokemon_types/Type_${type2}_HOME.webp`;
+            type2Img.style.display = 'block';
+            type2Img.title = `${type2} type`;
+        }
+        else {
+            type2Img.src = '';
+            type2Img.style.display = 'none';
+        }
+
+        let pokemonSpecies;
+        for (const item of speciesData.genera) {
+            if (item.language.name === 'en') {
+                pokemonSpecies = item.genus;
+                break;
+            }
+        }
+        document.getElementById('pokemonSpecies').textContent = 'The ' + pokemonSpecies;
+
+        const imgShiny = document.getElementById('shinySprite');
+        imgShiny.src = shinySprite;
+        imgShiny.style.display = 'block';
+        imgShiny.title = `${name} shiny sprite`;
+        document.getElementById('shiny-sparkles').style.display = 'block';
+
+        let pokedexNr;
+        for (const item of speciesData.pokedex_numbers) {
+            if (item.pokedex.name === 'national') {
+                pokedexNr = item.entry_number;
+                break;
+            }
+        }
+
+        document.getElementById('pokedexNr').textContent = `Pokédex Nr. ${pokedexNr}`;
+    }
+    catch(error) {
+        console.error(error);
+        document.getElementById('fetchText').textContent = 'Could not fetch data';
+
+        if (error.message === 'Pokémon not found') {
+            const didYou = document.getElementById('didYou');
+
+            if (didYou !== null) { didYou.remove(); }
+            document.querySelectorAll('.meanText').forEach(el => el.remove());
+
+            const inputtedName = document.getElementById('pokemonInput').value.toLowerCase().replace(" ", "-");
+
+            const top3ClosestPokemonNames = await get3ClosestNames(inputtedName);
+
+            const didYouContainer = document.getElementById('didYou-container');
+            let newP;
+            newP = document.createElement('p');
+            newP.id = 'didYou';
+            newP.textContent = 'did you mean?:';
+            didYouContainer.appendChild(newP);
+
+            for (const name of top3ClosestPokemonNames) {
+                newP = document.createElement('p');
+                newP.classList.add('meanText', 'clickable');
+                newP.id = name;
+                newP.textContent = name;
+                didYouContainer.appendChild(newP);
+                newP.setAttribute('onclick', `fetchNewInput(\'${name}\'); window.scrollTo(0, 0); document.getElementById(\'didYou\').remove(); document.querySelectorAll(\'.meanText\').forEach(el => el.remove());`);
+            }
+        }
+    }
+}
+
+async function fetchNewShinyInput(text) { // /shinytools/ page only
+    document.getElementById('shinyInput').value = text;
+    await fetchShinyData();
+}
+
+function encounterCounter(param, value = null) { // /shinytools/ page only
+    encounterTally = document.getElementById('encounterTally');
+    let count = Number(encounterTally.textContent);
+    let ok = true;
+    switch(param) {
+        case 'plus':
+            count++;
+            break;
+        case 'minus':
+            count--;
+            break;
+        case 'reset':
+            count = 0;
+            break;
+        case 'add':
+            count += Number(value);
+            if(Number.isNaN(count)) {
+                ok = false;
+            }
+            break;
+        case 'sub':
+            count -= Number(value);
+            if(Number.isNaN(count)) {
+                ok = false;
+            }
+            break;
+        case 'set':
+            count = Number(value);
+            if(Number.isNaN(count)) {
+                ok = false;
+            }
+            document.getElementById('setInput').value = '';
+            break;
+    }
+    if(ok) {
+        encounterTally.textContent = count;
+        params.set('count', count);
+        const newUrl = `${window.location.pathname}?${params.toString()}`;
+        window.history.pushState({}, "", newUrl);
+    }
+}
+
+async function fetchGameData() { // /shinytools/ page only
+    const didYou = document.getElementById('gameDidYou');
+    if (didYou !== null) { didYou.remove(); }
+    document.querySelectorAll('.gameMeanText').forEach(el => el.remove());
+
+    document.getElementById('fetchGameText').textContent = 'Fetching data...';
+    try {
+        const gameName = document.getElementById('gameInput').value.toLowerCase().replace(" ", "-");
+
+        if(!params.get('pokemon')) {
+            throw new Error('Please use shiny search for pokémon');
+        }
+        pokemonName = params.get('pokemon');
+
+        params.set('game', gameName);
+        const newUrl = `${window.location.pathname}?${params.toString()}`;
+        window.history.pushState({}, "", newUrl);
+
+        const response = await fetch(`https://pokeapi.co/api/v2/version-group/${gameName}`);
+        if(response.status === 404) {
+            throw new Error('Game not found');
+        }
+        if(!response.ok) {
+            throw new Error('Could not fetch data');
+        }
+        const data = await response.json();
+        document.getElementById('fetchGameText').textContent = 'Data fetched successfully';
+
+        let versionList = [];
+        for(const version of data.versions) {
+            versionList.push(version.name);
+        }
+
+        let urls = [];
+        for(const region of data.regions) {
+            urls.push(region.url);
+        }
+        
+        let responses = await Promise.all(urls.map(url => fetch(url)));
+        const regionsData = await Promise.all(responses.map(res => res.json()));
+        urls = regionsData.map(reg => reg.locations.map(loc => loc.url)).flat();
+        
+        responses = await Promise.all(urls.map(url => fetch(url)));
+        const locationsData = await Promise.all(responses.map(res => res.json()));
+        urls = locationsData.map(loc => loc.areas.map(area => area.url)).flat();
+        
+        responses = await Promise.all(urls.map(url => fetch(url)));
+        const areasData = await Promise.all(responses.map(res => res.json()));
+
+        document.querySelectorAll('.locationsContent').forEach(el => el.remove());
+        const areasContainer = document.getElementById('areas-container');
+        let newH2, newDiv, areaContainer, gamesContainer;
+        let inGame = false;
+        for(const area of areasData.filter(area => area.pokemon_encounters.map(enc => enc.pokemon.name).includes(pokemonName)).sort((a, b) => 
+            Math.max(...b.pokemon_encounters.map(enc => enc.version_details.filter(det => versionList.includes(det.version.name)).map(det => det.max_chance)).flat()) 
+            - Math.max(...a.pokemon_encounters.map(enc => enc.version_details.filter(det => versionList.includes(det.version.name)).map(det => det.max_chance)).flat()))) {
+            if(area.pokemon_encounters.map(enc => enc.pokemon.name).includes(pokemonName)) {
+                if(area.pokemon_encounters
+                    .filter(enc => enc.pokemon.name === pokemonName)
+                    .map(enc => enc.version_details.map(det => det.version.name)).flat()
+                    .filter(el => versionList.includes(el)).length >= 1) {
+                    inGame = true;
+                    newH2 = document.createElement('h2');
+                    newH2.classList.add('text', 'clickable', 'areaText', 'locationsContent');
+                    newH2.textContent = `${area.name}:`;
+                    newH2.setAttribute('onclick', `
+                        switch(document.getElementById('${area.name}-container').style.display) {
+                            case('none'): document.getElementById('${area.name}-container').style.display = 'block'; break;
+                            default: document.getElementById('${area.name}-container').style.display = 'none'; break;
+                        }`
+                    );
+                    areasContainer.appendChild(newH2);
+
+                    newDiv = document.createElement('div');
+                    newDiv.id = `${area.name}-container`;
+                    newDiv.classList.add( 'locationsContent');
+                    areasContainer.appendChild(newDiv);
+                    areaContainer = document.getElementById(`${area.name}-container`);
+
+                    for(const encounter of area.pokemon_encounters) {
+                        if(encounter.pokemon.name === pokemonName) {
+                            newH2 = document.createElement('h2');
+                            newH2.classList.add('text', 'clickable', 'gamesText', 'locationsContent');
+                            newH2.textContent = `Games:`;
+                            newH2.setAttribute('onclick', `
+                                switch(document.getElementById('${area.name}-games-container').style.display) {
+                                    case('none'): document.getElementById('${area.name}-games-container').style.display = 'block'; break;
+                                    default: document.getElementById('${area.name}-games-container').style.display = 'none'; break;
+                                }`
+                            );
+                            areaContainer.appendChild(newH2);
+
+                            newDiv = document.createElement('div');
+                            newDiv.id = `${area.name}-games-container`;
+                            newDiv.classList.add( 'locationsContent');
+                            areaContainer.appendChild(newDiv);
+                            gamesContainer = document.getElementById(`${area.name}-games-container`);
+
+                            for(const verDetail of encounter.version_details.sort((a, b) => b.max_chance - a.max_chance)) {
+                                if(versionList.includes(verDetail.version.name)) {
+                                    newH2 = document.createElement('h2');
+                                    newH2.classList.add('text', 'gameText', 'locationsContent');
+                                    newH2.setAttribute('onclick', `fetchNewGameInput(${verDetail.version.name})`);
+                                    newH2.textContent = `${verDetail.version.name}:`;
+                                    gamesContainer.appendChild(newH2);
+
+                                    newH2 = document.createElement('h2');
+                                    newH2.classList.add('text', 'maxEncounterChanceText', 'locationsContent');
+                                    newH2.textContent = `Max encounter chance: ${verDetail.max_chance}%`;
+                                    gamesContainer.appendChild(newH2);
+
+                                    for(const encDetail of verDetail.encounter_details.sort((a, b) => b.max_chance - a.max_chance)) {
+                                        newH2 = document.createElement('h2');
+                                        newH2.classList.add('text', 'encounterChanceText', 'locationsContent');
+                                        newH2.textContent = `Encounter chance: ${encDetail.chance}%`;
+                                        gamesContainer.appendChild(newH2);
+                                        
+                                        newH2 = document.createElement('h2');
+                                        newH2.classList.add('text', 'encounterMethodText', 'locationsContent');
+                                        newH2.textContent = `Encounter method: ${encDetail.method.name}`;
+                                        gamesContainer.appendChild(newH2);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        if(!inGame) {
+            throw new Error('Not in game');
+        }
+    }
+    catch(error) {
+        console.error(error);
+        document.getElementById('fetchGameText').textContent = 'Could not fetch data';
+
+        if(error.message === 'Game not found') {
+            const didYou = document.getElementById('gameDidYou');
+
+            if (didYou !== null) {didYou.remove();}
+            document.querySelectorAll('.gameMeanText').forEach(el => el.remove());
+
+            const inputtedName = document.getElementById('gameInput').value.toLowerCase().replace(" ", "-");
+
+            const top3ClosestPokemonNames = await get3ClosestNames(inputtedName, 'versionGroups');
+
+            const didYouContainer = document.getElementById('gameDidYou-container');
+            let newP;
+            newP = document.createElement('p');
+            newP.id = 'gameDidYou';
+            newP.textContent = 'did you mean?:';
+            didYouContainer.appendChild(newP);
+
+            for (const name of top3ClosestPokemonNames) {
+                newP = document.createElement('p');
+                newP.classList.add('gameMeanText', 'clickable');
+                newP.id = name;
+                newP.textContent = name;
+                didYouContainer.appendChild(newP);
+                newP.setAttribute('onclick', `fetchNewGameInput(\'${name}\'); window.scrollTo(0, 0); document.getElementById(\'gameDidYou\').remove(); document.querySelectorAll(\'.gameMeanText\').forEach(el => el.remove());`);
+            }
+        }
+        else if(error.message === 'Please use shiny search for pokémon') {
+            const didYou = document.getElementById('GameDidYou');
+
+            if(didYou !== null) {didYou.remove();}
+            document.querySelectorAll('.gameMeanText').forEach(el => el.remove());
+
+            const didYouContainer = document.getElementById('gameDidYou-container');
+            let newP;
+            newP = document.createElement('p');
+            newP.id = 'gameDidYou';
+            newP.textContent = 'please use shiny search';
+            didYouContainer.appendChild(newP);
+        }
+        else if(error.message === 'Not in game') {
+            const didYou = document.getElementById('GameDidYou');
+
+            if(didYou !== null) {didYou.remove();}
+            document.querySelectorAll('.gameMeanText').forEach(el => el.remove());
+
+            document.getElementById('fetchGameText').textContent = `Could not find '${params.get('pokemon')}' in '${document.getElementById('gameInput').value}'`;
+        }
+    }
+}
+
+async function fetchNewGameInput(text) { // /shinytools/ page only
+    document.getElementById('gameInput').value = text;
+    await fetchGameData();
 }
 
 function switchTheme(theme) {
@@ -784,17 +2061,29 @@ function switchTheme(theme) {
         }
     }
 
-    indexBody = document.getElementById('index-body');
-    indexBody.style['background-color'] = themes[theme][0];
-    indexBody.style['color'] = themes[theme][1];
+    if(window.location.pathname.endsWith("/locations/") || window.location.pathname.endsWith("/locations/index.html")) {
+        locationsBody = document.getElementById('locationsBody');
+        locationsBody.style['background-color'] = themes[theme][0];
+        locationsBody.style['color'] = themes[theme][1];
+    }
+    else if(window.location.pathname.endsWith("/shinytools/") || window.location.pathname.endsWith("/shinytools/index.html")) {
+        shinytoolsBody = document.getElementById('shinytoolsBody');
+        shinytoolsBody.style['background-color'] = themes[theme][0];
+        shinytoolsBody.style['color'] = themes[theme][1];
+    }
+    else { // this will always be the index page (unless this function is called in /about/, but it isn't)
+        indexBody = document.getElementById('index-body');
+        indexBody.style['background-color'] = themes[theme][0];
+        indexBody.style['color'] = themes[theme][1];
+    }
 
+    document.querySelectorAll('.textInput').forEach(el => el.style['border-color'] = themes[theme][1]);
 
-    const fetchButton = document.getElementById('fetch-button');
-    fetchButton.style['background-color'] = themes[theme][2];
-    fetchButton.style['color'] = themes[theme][1];
-    fetchButton.style['border-color'] = themes[theme][1];
-
-    document.getElementById('pokemonInput').style['border-color'] = themes[theme][1];
+    document.querySelectorAll('.button').forEach(el => {
+        el.style['background-color'] = themes[theme][2];
+        el.style['color'] = themes[theme][1];
+        el.style['border-color'] = themes[theme][1];
+    });
 
     document.getElementById('themes-text-container').style['background'] = themes[theme][2];
 
@@ -810,32 +2099,135 @@ function switchTheme(theme) {
 }
 
 async function getPokemonList() {
+    let pokemonList = [];
     try {
         const response = await fetch('https://pokeapi.co/api/v2/pokemon/?limit=100000&offset=0');
         if (!response.ok) {
             throw new Error('Could not fetch data');
         }
-
         const data = await response.json();
 
-        let pokemonList = [];
         for (const pokemon of data.results) {
             pokemonList.push(pokemon.name);
         }
-
-        return pokemonList;
     }
     catch (error) {
         console.error(error);
-        return [];
     }
+    return pokemonList;
 }
 
-// The code below was heavily assisted by the OpenAI chatbot ChatGPT
-async function get3ClosestPokemonNames(input) {
-    let pokemonNames = await getPokemonList();
+async function getLocationsList() {
+    let locationsList = [];
+    try {
+        const response = await fetch('https://pokeapi.co/api/v2/region/?limit=100000&offset=0');
+        if(!response.ok) {
+            throw new Error('Could not fetch data');
+        }
+        const data = await response.json();
 
-    const top3ClosestPokemonNames = pokemonNames
+        let urls = [];
+        for(const item of data.results) {
+            urls.push(item.url);
+        }
+
+        const responses = await Promise.all(urls.map(url => fetch(url)));
+        const locationsData = await Promise.all(responses.map(res => res.json()));
+        locationsList = locationsData.map(reg => reg.locations.map(loc => loc.name)).flat();
+    }
+    catch(error) {
+        console.error(error);
+    }
+    return locationsList;
+}
+
+async function getAreasList() {
+    let areasList = [];
+    try {
+        const response = await fetch('https://pokeapi.co/api/v2/region/?limit=100000&offset=0');
+        if(!response.ok) {
+            throw new Error('Could not fetch data');
+        }
+        const data = await response.json();
+
+        let urls = [];
+        for(const item of data.results) {
+            urls.push(item.url);
+        }
+
+        const locationsResponses = await Promise.all(urls.map(url => fetch(url)));
+        const locationsData = await Promise.all(locationsResponses.map(res => res.json()));
+        locationsList = locationsData.map(reg => reg.locations.map(loc => loc.url)).flat();
+        
+        const areasResponses = await Promise.all(locationsList.map(url => fetch(url)));
+        const areasData = await Promise.all(areasResponses.map(res => res.json()));
+        areasList = areasData.map(reg => reg.areas.map(loc => loc.name)).flat();
+    }
+    catch(error) {
+        console.error(error);
+    }
+    return areasList;
+}
+
+async function getRegionList() {
+    regionList = [];
+    try {
+        const response = await fetch('https://pokeapi.co/api/v2/region/?limit=100000&offset=0');
+        if(!response.ok) {
+            throw new Error('Could not fetch data');
+        }
+        const data = await response.json();
+
+        for(const item of data.results) {
+            regionList.push(item.name);
+        }
+    }
+    catch(error) {
+        console.error(error);
+    }
+    return regionList;
+}
+
+async function getVersionGroupsList() {
+    let versionGroupsList = [];
+    try {
+        const response = await fetch('https://pokeapi.co/api/v2/version-group/?limit=100000&offset=0');
+        if (!response.ok) {
+            throw new Error('Could not fetch data');
+        }
+        const data = await response.json();
+
+        for (const item of data.results) {
+            versionGroupsList.push(item.name);
+        }
+    }
+    catch (error) {
+        console.error(error);
+    }
+    return versionGroupsList;
+}
+
+// All code past this point was heavily assisted by the OpenAI chatbot ChatGPT
+async function get3ClosestNames(input, param = 'pokemon') {
+    let namesList = [];
+    switch(param) {
+        case 'pokemon':
+            namesList = await getPokemonList()
+            break
+        case 'versionGroups':
+            namesList = await getVersionGroupsList()
+            break
+        case 'locations':
+            namesList = await getLocationsList()
+            break
+        case 'areas':
+            namesList = await getAreasList()
+            break
+        case 'region':
+            namesList = await getRegionList()
+    }
+
+    const top3ClosestNames = namesList
         .map(name => ({
             name,
             score: similarityScore(input, name)
@@ -844,9 +2236,8 @@ async function get3ClosestPokemonNames(input) {
         .slice(0, 3)
         .map(x => x.name);
 
-    return top3ClosestPokemonNames;
+    return top3ClosestNames;
 }
-
 
 function levenshtein(a, b) {
     const rows = a.length + 1;
@@ -886,6 +2277,9 @@ function similarityScore(a, b) {
 
     let score = -levenshtein(a, b);
 
+    if(a === b) {
+        score += 2000;
+    }
     if (a.includes(b) || b.includes(a)) {
         score += 1000;
     }

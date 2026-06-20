@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shinytools</title>
+
+    <meta name="description" content="The shiny hunter tool living in parallel with Monkadex by Simonkamon11">
+    <meta name="keywords" content="locations, pokémon, pokédex">
+    <meta name="author" content="Simon Aarseth">
+
+    <link rel="stylesheet" href="../style.css">
+    <link rel="icon" href="../images/pokeballs/pokeball_pokedex.png" type="image/x-icon">
+    <link href="https://fonts.googleapis.com/css2?family=Bitcount+Single:wght@100..900&family=Press+Start+2P&display=swap" rel="stylesheet">
+</head>
+<body id="shinytoolsBody">
+    <div id="header">
+        <div id="logo-container" class="clickable" onclick="window.location.href = 'https://simonkamon11.github.io/monkadex';">
+            <img src="../images/pokeballs/pokeball_pokedex.png" id="logo-img">
+            <h1 class="header-text" id="logo-text">Monkadex</h1>
+        </div>
+        <div id="header-pages-menu">
+            <div class="clickable" id="header-pages-text-container" onclick="
+            switch(document.getElementById('header-pages-dropdown-menu').style.display) {
+                case('none'): document.getElementById('header-pages-dropdown-menu').style.display = 'block'; break;
+                default: document.getElementById('header-pages-dropdown-menu').style.display = 'none'; break;
+            }">
+                <h2 id="header-pages-text">Other pages</h2>
+                <img src="" id="dropdown-arrow">
+            </div>
+            <div id="header-pages-dropdown-menu">
+                <h2 class="pageLink clickable" onclick="window.location.href = 'https://simonkamon11.github.io/monkadex/locations/'">locations</h2>
+                <h2 class="pageLink clickable" onclick="window.location.href = 'https://simonkamon11.github.io/monkadex/shinytools/'">shinytools</h2>
+                <h2 class="pageLink clickable" onclick="window.location.href = 'https://simonkamon11.github.io/monkadex/about/'">about</h2>
+                <h2 class="pageLink clickable" onclick="window.location.href = 'https://simonkamon11.github.io/monkadex/sitemap.html'">sitemap</h2>
+            </div>
+        </div>
+        <script>
+            black = 'rgb(0, 0, 0)';
+            white = 'rgb(255, 255, 255)';
+            if(window.matchMedia("(prefers-color-scheme: dark)").matches) {
+                colour1 = black
+                colour2 = white
+                document.getElementById('dropdown-arrow').src = '../images/arrow_white.png'
+            }
+            else {
+                colour1 = white
+                colour2 = black
+                document.getElementById('dropdown-arrow').src = '../images/arrow_black.png'
+            }
+            document.getElementById('header').style['background-color'] = colour1
+            document.getElementById('logo-text').style['color'] = colour2
+            document.getElementById('header-pages-dropdown-menu').style['background-color'] = colour1
+            document.getElementById('header-pages-text').style['color'] = colour2
+            document.querySelectorAll('.pageLink').forEach(el => el.style['color'] = colour2)
+        </script>
+    </div>
+
+    <div id="themes-text-container">
+        <h2 class="text" id="themes-text">themes: </h2>
+        <div id="themes-container">
+            <div class="theme-container">
+                <img src="../images/pokeballs/pokeball_pokedex.png" alt="" class="theme-img">
+                <h2 class="theme text clickable" onclick="switchTheme('pokedex')">pokédex</h2>
+            </div>
+            <div class="theme-container">
+                <img src="../images/pokeballs/pokeball_dark.png" alt="" class="theme-img">
+                <h2 class="theme text clickable" onclick="switchTheme('dark')">dark</h2>
+            </div>
+            <div class="theme-container">
+                <img src="../images/pokeballs/pokeball_light.png" alt="" class="theme-img">
+                <h2 class="theme text clickable" onclick="switchTheme('light')">light</h2>
+            </div>
+            <div class="theme-container">
+                <img src="../images/pokeballs/pokeball_black.png" alt="" class="theme-img">
+                <h2 class="theme text clickable" onclick="switchTheme('black')">black</h2>
+            </div>
+            <div class="theme-container">
+                <img src="../images/pokeballs/pokeball_ultraball.png" alt="" class="theme-img">
+                <h2 class="theme text clickable" onclick="switchTheme('ultraball')">ultraball</h2>
+            </div>
+            <div class="theme-container">
+                <img src="../images/pokeballs/pokeball_premier.png" alt="" class="theme-img">
+                <h2 class="theme text clickable" onclick="switchTheme('premier')">premier</h2>
+            </div>
+            <div class="theme-container">
+                <img src="../images/pokeballs/pokeball_gameboy.png" alt="" class="theme-img">
+                <h2 class="theme text clickable" onclick="switchTheme('gameboy')">gameboy</h2>
+            </div>
+        </div>
+    </div>
+
+    <h1 id="title" class="text">Shiny tools</h1>
+    <h2 id="owner" class="text">Tools for shinyhunters by Simonkamon11</h2>
+
+    <h2 class="title-text clickable" onclick="
+    switch(document.getElementById('shinySearch-container').style.display) {
+        case('none'): document.getElementById('shinySearch-container').style.display = 'block'; break;
+        default: document.getElementById('shinySearch-container').style.display = 'none'; break;
+    }">Shiny search:</h2>
+    <div id="shinySearch-container">
+        <input type="text" class="textInput" id="shinyInput" placeholder="Enter Pokémon name">
+        <button onclick="fetchShinyData()" class="button clickable" id="fetch-button">Search shiny</button><br>
+        <div id="fetchText-container" class="fetchText-container">
+            <p id="fetchText" class="text fetchText"></p>
+            <div id="didYou-container"></div>
+        </div>
+
+        <div class="name-type-container">
+            <h1 id="pokemonName" class="text pokemonName clickable"></h1>
+            <img src="" alt="type1" id="type1" style="display: none;">
+            <img src="" alt="type2" id="type2" style="display: none;">
+        </div>
+        <h2 id="pokemonSpecies" class="text pokemonSpecies"></h2>
+        <div id="pokemonImages-container">
+            <div class="corner-icon-container">
+                <img src="" alt="Pokémon Shiny Sprite" id="shinySprite" style="display: none;" class="pokemonImages"> 
+                <img src="../images/shiny_sparkles.png" alt="shiny sparkles" id="shiny-sparkles" class="corner-icon" style="display: none;">
+            </div>
+        </div>
+        <h2 id="pokedexNr" class="text pokedexNr"></h2>
+    </div>
+
+    <h2 class="title-text clickable" onclick="
+    switch(document.getElementById('encounterCounter-container').style.display) {
+        case('none'): document.getElementById('encounterCounter-container').style.display = 'block'; break;
+        default: document.getElementById('encounterCounter-container').style.display = 'none'; break;
+    }">Encounter counter:</h2>
+    <div id="encounterCounter-container">
+        <h2 id="encounterTally" class="text">0</h2>
+        <button class="button clickable" onclick="encounterCounter('plus')">+1</button>
+        <button class="button clickable" onclick="encounterCounter('minus')">-1</button>
+        <button class="button clickable" onclick="encounterCounter('reset')">reset</button>
+        <br>
+        <div class="encounterCounter-input-container">
+            <input type="text" class="textInput encounterCounter-input" id="addInput" placeholder="add">
+            <button class="button clickable" onclick="encounterCounter('add', document.getElementById('addInput').value)">add</button>
+            <button class="button clickable" onclick="document.getElementById('addInput').value = ''">clear</button>
+        </div>
+        <div class="encounterCounter-input-container">
+            <input type="text" class="textInput encounterCounter-input" id="subInput" placeholder="sub">
+            <button class="button clickable" onclick="encounterCounter('sub', document.getElementById('subInput').value)">sub</button>
+            <button class="button clickable" onclick="document.getElementById('subInput').value = ''">clear</button>
+        </div>
+        <div class="encounterCounter-input-container">
+            <input type="text" class="textInput encounterCounter-input" id="setInput" placeholder="set">
+            <button class="button clickable" onclick="encounterCounter('set', document.getElementById('setInput').value)">set</button>
+        </div>
+    </div>
+
+    <h2 class="title-text clickable" onclick="
+    switch(document.getElementById('location-container').style.display) {
+        case('none'): document.getElementById('location-container').style.display = 'block'; break;
+        default: document.getElementById('location-container').style.display = 'none'; break;
+    }">Locations:</h2>
+    <div id="location-container">
+        <input type="text" class="textInput" id="gameInput" placeholder="Enter Game name">
+        <button onclick="fetchGameData()" class="button clickable" id="fetchGame-button">Fetch data</button><br>
+        <div class="fetchGameText-container">
+            <p id="fetchGameText" class="text fetchText"></p>
+            <div id="gameDidYou-container"></div>
+        </div>
+        <div id="areas-container"></div>
+    </div>
+
+    <script src="../script.js"></script>
+</body>
+</html>

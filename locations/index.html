@@ -3,17 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>About</title>
+    <title>Locations</title>
 
-    <meta name="description" content="The about-page of Monkadex by Simonkamon11">
-    <meta name="keywords" content="about-page, pokémon, pokédex">
+    <meta name="description" content="The location-dex living in parallel with Monkadex by Simonkamon11">
+    <meta name="keywords" content="locations, pokémon, pokédex">
     <meta name="author" content="Simon Aarseth">
 
     <link rel="stylesheet" href="../style.css">
     <link rel="icon" href="../images/pokeballs/pokeball_pokedex.png" type="image/x-icon">
     <link href="https://fonts.googleapis.com/css2?family=Bitcount+Single:wght@100..900&family=Press+Start+2P&display=swap" rel="stylesheet">
 </head>
-<body id="about-body">
+<body id="locationsBody">
     <div id="header">
         <div id="logo-container" class="clickable" onclick="window.location.href = 'https://simonkamon11.github.io/monkadex';">
             <img src="../images/pokeballs/pokeball_pokedex.png" id="logo-img">
@@ -55,21 +55,55 @@
             document.querySelectorAll('.pageLink').forEach(el => el.style['color'] = colour2)
         </script>
     </div>
-    
-    <div id="header-border"></div>
 
-    <h1 id="title" class="text">about</h1>
+    <div id="themes-text-container">
+        <h2 class="text" id="themes-text">themes: </h2>
+        <div id="themes-container">
+            <div class="theme-container">
+                <img src="../images/pokeballs/pokeball_pokedex.png" alt="" class="theme-img">
+                <h2 class="theme text clickable" onclick="switchTheme('pokedex')">pokédex</h2>
+            </div>
+            <div class="theme-container">
+                <img src="../images/pokeballs/pokeball_dark.png" alt="" class="theme-img">
+                <h2 class="theme text clickable" onclick="switchTheme('dark')">dark</h2>
+            </div>
+            <div class="theme-container">
+                <img src="../images/pokeballs/pokeball_light.png" alt="" class="theme-img">
+                <h2 class="theme text clickable" onclick="switchTheme('light')">light</h2>
+            </div>
+            <div class="theme-container">
+                <img src="../images/pokeballs/pokeball_black.png" alt="" class="theme-img">
+                <h2 class="theme text clickable" onclick="switchTheme('black')">black</h2>
+            </div>
+            <div class="theme-container">
+                <img src="../images/pokeballs/pokeball_ultraball.png" alt="" class="theme-img">
+                <h2 class="theme text clickable" onclick="switchTheme('ultraball')">ultraball</h2>
+            </div>
+            <div class="theme-container">
+                <img src="../images/pokeballs/pokeball_premier.png" alt="" class="theme-img">
+                <h2 class="theme text clickable" onclick="switchTheme('premier')">premier</h2>
+            </div>
+            <div class="theme-container">
+                <img src="../images/pokeballs/pokeball_gameboy.png" alt="" class="theme-img">
+                <h2 class="theme text clickable" onclick="switchTheme('gameboy')">gameboy</h2>
+            </div>
+        </div>
+    </div>
+
+    <h1 id="title" class="text">Pokémon locations</h1>
     <h2 id="owner" class="text">Monkadex by Simonkamon11</h2>
+    <input type="text" class="textInput"  id="regionInput" placeholder="Enter Region name">
+    <button onclick="fetchRegionData()" class="button clickable fetch-button">Fetch data</button><br>
+    <input type="text" class="textInput"  id="locationInput" placeholder="Enter Location name">
+    <button onclick="fetchLocationData()" class="button clickable fetch-button">Fetch data</button><br>
+    <input type="text" class="textInput"  id="areaInput" placeholder="Enter Area name">
+    <button onclick="fetchAreaData()" class="button clickable fetch-button">Fetch data</button><br>
+    <div id="fetchText-container" class="fetchText-container">
+        <p id="fetchText" class="text fetchText"></p>
+        <div id="didYou-container"></div>
+    </div>
 
-    <h2 class="text title-text-about-page">Sources:</h2>
-    <div class="source-container">
-        <h3 class="text link-pointer">All data: </h3>
-        <h3 class="text clickable link" onclick="window.open('https://pokeapi.co', '_blank');">https://pokeapi.co</h3>
-    </div>
-    <div class="source-container">
-        <h3 class="text link-pointer">Bitcount Single font: </h3>
-        <h3 class="text clickable link" onclick="window.open('https://fonts.google.com/specimen/Bitcount+Single', '_blank');">https://fonts.google.com/specimen/Bitcount+Single</h3>
-    </div>
+    <div id="locations-container"></div>
 
     <script src="../script.js"></script>
 </body>
