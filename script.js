@@ -269,6 +269,8 @@ async function fetchPokemonData() { // index page only
         imgShiny.title = `${name} shiny sprite`;
         document.getElementById('shiny-sparkles').style.display = 'block';
 
+        document.getElementById('shinyImage-container').onclick = () => window.location.href = `https://simonkamon11.github.io/monkadex/shinytools/?pokemon=${pokemonName}&theme=${params.get('theme')}`;
+
         let pokedexNr;
         for (const item of speciesData.pokedex_numbers) {
             if (item.pokedex.name === 'national') {
@@ -1567,7 +1569,7 @@ async function areaClicked(area) { // /locations/ page only
 
             encounterNameHTML.classList.add('locationsContent', 'text', 'pokemonName', 'clickable')
             encounterNameHTML.textContent = encounterName.charAt(0).toUpperCase() + encounterName.substring(1);
-            encounterNameHTML.setAttribute('onclick', `window.location.href = 'https://simonkamon11.github.io/monkadex/?pokemon=${encounterName}'`);
+            encounterNameHTML.setAttribute('onclick', `window.location.href = 'https://simonkamon11.github.io/monkadex/?pokemon=${encounterName}&theme=${params.get('theme')}'`);
             encounterNameTypeDiv.appendChild(encounterNameHTML);
 
             encounterType1HTML.classList.add('locationsContent');
@@ -1715,7 +1717,7 @@ async function fetchShinyData() { // /shinytools/ page only
 
         const pokemonNameHTML = document.getElementById('pokemonName');
         pokemonNameHTML.textContent = name;
-        pokemonNameHTML.setAttribute('onclick', `window.location.href = 'https://simonkamon11.github.io/monkadex/?pokemon=${pokemonName}'`);
+        pokemonNameHTML.setAttribute('onclick', `window.location.href = 'https://simonkamon11.github.io/monkadex/?pokemon=${pokemonName}&theme=${params.get('theme')}'`);
 
         const type1Img = document.getElementById('type1');
         const type1 = data.types[0].type.name.charAt(0).toUpperCase() + data.types[0].type.name.substring(1);
