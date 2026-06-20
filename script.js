@@ -1858,20 +1858,37 @@ async function fetchGameData() { // /shinytools/ page only
         const newUrl = `${window.location.pathname}?${params.toString()}`;
         window.history.pushState({}, "", newUrl);
 
-        const response = await fetch(`https://pokeapi.co/api/v2/version-group/${gameName}`);
-        if(response.status === 404) {
-            throw new Error('Game not found');
-        }
-        if(!response.ok) {
-            throw new Error('Could not fetch data');
-        }
-        const data = await response.json();
-        document.getElementById('fetchGameText').textContent = 'Data fetched successfully';
-
+        let response = await fetch(`https://pokeapi.co/api/v2/version-group/${gameName}`);
+        let data;
         let versionList = [];
-        for(const version of data.versions) {
-            versionList.push(version.name);
+        if(response.status === 404) {
+            response = await fetch(`https://pokeapi.co/api/v2/version/${gameName}`);
+            if(response.status === 404) {
+                throw new Error('Game not found');
+            }
+            if(!response.ok) {
+                throw new Error('Could not fetch data');
+            }
+            data = await response.json();
+            versionList.push(data.name);
+
+            response = await fetch(data.version_group.url);
+            if(!response.ok) {
+                throw new Error('Could not fetch data');
+            }
+            data = await response.json();
         }
+        else {
+            if(!response.ok) {
+                throw new Error('Could not fetch data');
+            }
+            data = await response.json();
+
+            for(const version of data.versions) {
+                versionList.push(version.name);
+            }
+        }
+        document.getElementById('fetchGameText').textContent = 'Data fetched successfully';
 
         let urls = [];
         for(const region of data.regions) {
@@ -1985,7 +2002,7 @@ async function fetchGameData() { // /shinytools/ page only
 
             const inputtedName = document.getElementById('gameInput').value.toLowerCase().replace(" ", "-");
 
-            const top3ClosestPokemonNames = await get3ClosestNames(inputtedName, 'versionGroups');
+            const top3ClosestPokemonNames = await get3ClosestNames(inputtedName, 'games');
 
             const didYouContainer = document.getElementById('gameDidYou-container');
             let newP;
@@ -2188,23 +2205,33 @@ async function getRegionList() {
     return regionList;
 }
 
-async function getVersionGroupsList() {
-    let versionGroupsList = [];
+async function getGamesList() {
+    let gamesList = [];
     try {
-        const response = await fetch('https://pokeapi.co/api/v2/version-group/?limit=100000&offset=0');
-        if (!response.ok) {
+        const versionGroupResponse = await fetch('https://pokeapi.co/api/v2/version-group/?limit=100000&offset=0');
+        if (!versionGroupResponse.ok) {
             throw new Error('Could not fetch data');
         }
-        const data = await response.json();
+        const versionGroupData = await versionGroupResponse.json();
 
-        for (const item of data.results) {
-            versionGroupsList.push(item.name);
+        for (const item of versionGroupData.results) {
+            gamesList.push(item.name);
+        }
+
+        const versionResponse = await fetch('https://pokeapi.co/api/v2/version/?limit=100000&offset=0');
+        if (!versionResponse.ok) {
+            throw new Error('Could not fetch data');
+        }
+        const versionData = await versionesponse.json();
+
+        for (const item of versionData.results) {
+            gamesList.push(item.name);
         }
     }
     catch (error) {
         console.error(error);
     }
-    return versionGroupsList;
+    return gamesList;
 }
 
 // All code past this point was heavily assisted by the OpenAI chatbot ChatGPT
@@ -2214,8 +2241,8 @@ async function get3ClosestNames(input, param = 'pokemon') {
         case 'pokemon':
             namesList = await getPokemonList()
             break
-        case 'versionGroups':
-            namesList = await getVersionGroupsList()
+        case 'games':
+            namesList = await getGamesList()
             break
         case 'locations':
             namesList = await getLocationsList()

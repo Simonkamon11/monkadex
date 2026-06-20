@@ -15,7 +15,7 @@
 </head>
 <body id="shinytoolsBody">
     <div id="header">
-        <div id="logo-container" class="clickable" onclick="window.location.href = 'https://simonkamon11.github.io/monkadex';">
+        <div id="logo-container" class="clickable">
             <img src="../images/pokeballs/pokeball_pokedex.png" id="logo-img">
             <h1 class="header-text" id="logo-text">Monkadex</h1>
         </div>
@@ -29,13 +29,15 @@
                 <img src="" id="dropdown-arrow">
             </div>
             <div id="header-pages-dropdown-menu">
-                <h2 class="pageLink clickable" onclick="window.location.href = 'https://simonkamon11.github.io/monkadex/locations/'">locations</h2>
-                <h2 class="pageLink clickable" onclick="window.location.href = 'https://simonkamon11.github.io/monkadex/shinytools/'">shinytools</h2>
+                <h2 class="pageLink clickable paramLink">locations</h2>
+                <h2 class="pageLink clickable paramLink">shinytools</h2>
                 <h2 class="pageLink clickable" onclick="window.location.href = 'https://simonkamon11.github.io/monkadex/about/'">about</h2>
                 <h2 class="pageLink clickable" onclick="window.location.href = 'https://simonkamon11.github.io/monkadex/sitemap.html'">sitemap</h2>
             </div>
         </div>
         <script>
+            globalThis.params = new URLSearchParams(window.location.search);
+
             black = 'rgb(0, 0, 0)';
             white = 'rgb(255, 255, 255)';
             if(window.matchMedia("(prefers-color-scheme: dark)").matches) {
@@ -53,6 +55,9 @@
             document.getElementById('header-pages-dropdown-menu').style['background-color'] = colour1
             document.getElementById('header-pages-text').style['color'] = colour2
             document.querySelectorAll('.pageLink').forEach(el => el.style['color'] = colour2)
+
+            document.querySelectorAll('.paramLink').forEach(el => el.onclick = () => window.location.href = `https://simonkamon11.github.io/monkadex/${el.textContent}/?theme=${params.get('theme')}`)
+            document.getElementById('logo-container').onclick = () => window.location.href = `https://simonkamon11.github.io/monkadex/?theme=${params.get('theme')}`
         </script>
     </div>
 
