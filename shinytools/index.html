@@ -128,23 +128,24 @@
     }">Encounter counter:</h2>
     <div id="encounterCounter-container">
         <h2 id="encounterTally" class="text">0</h2>
-        <button class="button clickable" onclick="encounterCounter('plus')">+1</button>
-        <button class="button clickable" onclick="encounterCounter('minus')">-1</button>
-        <button class="button clickable" onclick="encounterCounter('reset')">reset</button>
-        <br>
+        <div id="encounterCounterButton-container">
+            <button class="button clickable" onclick="encounterCounter('minus')" id="minusButton">-</button>
+            <button class="button clickable" onclick="encounterCounter('plus')" id="plusButton">+</button>
+        </div>
         <div class="encounterCounter-input-container">
-            <input type="text" class="textInput encounterCounter-input" id="addInput" placeholder="add">
             <button class="button clickable" onclick="encounterCounter('add', document.getElementById('addInput').value)">add</button>
+            <input type="text" class="textInput encounterCounter-input" id="addInput" placeholder="add">
             <button class="button clickable" onclick="document.getElementById('addInput').value = ''">clear</button>
         </div>
         <div class="encounterCounter-input-container">
-            <input type="text" class="textInput encounterCounter-input" id="subInput" placeholder="sub">
             <button class="button clickable" onclick="encounterCounter('sub', document.getElementById('subInput').value)">sub</button>
+            <input type="text" class="textInput encounterCounter-input" id="subInput" placeholder="sub">
             <button class="button clickable" onclick="document.getElementById('subInput').value = ''">clear</button>
         </div>
         <div class="encounterCounter-input-container">
-            <input type="text" class="textInput encounterCounter-input" id="setInput" placeholder="set">
             <button class="button clickable" onclick="encounterCounter('set', document.getElementById('setInput').value)">set</button>
+            <input type="text" class="textInput encounterCounter-input" id="setInput" placeholder="set">
+            <button class="button clickable" onclick="encounterCounter('reset')" id="resetButton">reset</button>
         </div>
     </div>
 

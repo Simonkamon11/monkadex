@@ -391,6 +391,25 @@ h2{
 .encounterCounter-input{
     width: 62px;
 }
+#encounterCounterButton-container{
+    display: flex;
+    gap: 4px;
+}
+#plusButton{
+    width: 72px;
+    height: 72px;
+}
+#minusButton{
+    width: 46px;
+}
+#resetButton-container{
+    display: flex;
+    flex-direction: column;
+    height: 72px;
+}
+#resetButton{
+    margin-top: auto;
+}
 .sitemap-title{
     font-size: 40px;
 }
