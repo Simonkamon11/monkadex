@@ -168,6 +168,10 @@ export function setupAbout() {
         colour2 = 'rgb(0, 0, 0)';
     }
     else {
+        if(params.get('theme')) {
+            const newUrl = window.location.pathname;
+            window.history.pushState({}, "", newUrl);
+        }
         if(window.matchMedia("(prefers-color-scheme: dark)").matches) {
             colour1 = 'rgb(40, 40, 40)';
             colour2 = 'rgb(170, 170, 170)';
@@ -201,6 +205,10 @@ export function setupSitemap() {
         colour2 = 'rgb(0, 0, 0)';
     }
     else {
+        if(themeParam) {
+            const newUrl = window.location.pathname;
+            window.history.pushState({}, "", newUrl);
+        }
         if(window.matchMedia("(prefers-color-scheme: dark)").matches) {
             colour1 = 'rgb(40, 40, 40)';
             colour2 = 'rgb(170, 170, 170)';
