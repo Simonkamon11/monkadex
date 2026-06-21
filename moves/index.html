@@ -3,17 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Shinytools</title>
+    <title>Moves</title>
 
-    <meta name="description" content="The shiny hunter tool living in parallel with Monkadex by Simonkamon11">
-    <meta name="keywords" content="locations, pokémon, pokédex">
+    <meta name="description" content="The move-dex living in parallel with Monkadex by Simonkamon11">
+    <meta name="keywords" content="moves, pokémon, pokédex">
     <meta name="author" content="Simon Aarseth">
 
     <link rel="stylesheet" href="../style.css">
     <link rel="icon" href="../images/pokeballs/pokeball_pokedex.png" type="image/x-icon">
     <link href="https://fonts.googleapis.com/css2?family=Bitcount+Single:wght@100..900&family=Press+Start+2P&display=swap" rel="stylesheet">
 </head>
-<body id="shinytoolsBody">
+<body id="movesBody">
     <div id="header">
         <div id="logo-container" class="clickable">
             <img src="../images/pokeballs/pokeball_pokedex.png" id="logo-img">
@@ -96,79 +96,16 @@
         </div>
     </div>
 
-    <h1 id="title" class="text">Shinytools</h1>
-    <h2 id="owner" class="text">Tools for shinyhunters by Simonkamon11</h2>
-
-    <h2 class="title-text clickable" onclick="
-    switch(document.getElementById('shinySearch-container').style.display) {
-        case('none'): document.getElementById('shinySearch-container').style.display = 'block'; break;
-        default: document.getElementById('shinySearch-container').style.display = 'none'; break;
-    }">Shiny search:</h2>
-    <div id="shinySearch-container">
-        <input type="text" class="textInput" id="shinyInput" placeholder="Enter Pokémon name">
-        <button onclick="fetchShinyData()" class="button clickable" id="fetch-button">Search shiny</button><br>
-        <div id="fetchText-container" class="fetchText-container">
-            <p id="fetchText" class="text fetchText"></p>
-            <div id="didYou-container"></div>
-        </div>
-
-        <div class="name-type-container">
-            <h1 id="pokemonName" class="text pokemonName clickable"></h1>
-            <img src="" alt="type1" id="type1" style="display: none;">
-            <img src="" alt="type2" id="type2" style="display: none;">
-        </div>
-        <h2 id="pokemonSpecies" class="text pokemonSpecies"></h2>
-        <div id="pokemonImages-container">
-            <div class="corner-icon-container">
-                <img src="" alt="Pokémon Shiny Sprite" id="shinySprite" style="display: none;" class="pokemonImages"> 
-                <img src="../images/shiny_sparkles.png" alt="shiny sparkles" id="shiny-sparkles" class="corner-icon" style="display: none;">
-            </div>
-        </div>
-        <h2 id="pokedexNr" class="text pokedexNr"></h2>
+    <h1 id="title" class="text">Pokémon moves</h1>
+    <h2 id="owner" class="text">Monkadex by Simonkamon11</h2>
+    <input type="text" class="textInput"  id="moveInput" placeholder="Enter Move name">
+    <button onclick="fetchMoveData()" class="button clickable fetch-button">Fetch data</button><br>
+    <div id="fetchText-container" class="fetchText-container">
+        <p id="fetchText" class="text fetchText"></p>
+        <div id="didYou-container"></div>
     </div>
 
-    <h2 class="title-text clickable" onclick="
-    switch(document.getElementById('encounterCounter-container').style.display) {
-        case('none'): document.getElementById('encounterCounter-container').style.display = 'block'; break;
-        default: document.getElementById('encounterCounter-container').style.display = 'none'; break;
-    }">Encounter counter:</h2>
-    <div id="encounterCounter-container">
-        <h2 id="encounterTally" class="text">0</h2>
-        <div id="encounterCounterButton-container">
-            <button class="button clickable" onclick="encounterCounter('minus')" id="minusButton">-</button>
-            <button class="button clickable" onclick="encounterCounter('plus')" id="plusButton">+</button>
-        </div>
-        <div class="encounterCounter-input-container">
-            <button class="button clickable" onclick="encounterCounter('add', document.getElementById('addInput').value)">add</button>
-            <input type="text" class="textInput encounterCounter-input" id="addInput" placeholder="add">
-            <button class="button clickable" onclick="document.getElementById('addInput').value = ''">clear</button>
-        </div>
-        <div class="encounterCounter-input-container">
-            <button class="button clickable" onclick="encounterCounter('sub', document.getElementById('subInput').value)">sub</button>
-            <input type="text" class="textInput encounterCounter-input" id="subInput" placeholder="sub">
-            <button class="button clickable" onclick="document.getElementById('subInput').value = ''">clear</button>
-        </div>
-        <div class="encounterCounter-input-container">
-            <button class="button clickable" onclick="encounterCounter('set', document.getElementById('setInput').value)">set</button>
-            <input type="text" class="textInput encounterCounter-input" id="setInput" placeholder="set">
-            <button class="button clickable" onclick="encounterCounter('reset')" id="resetButton">reset</button>
-        </div>
-    </div>
-
-    <h2 class="title-text clickable" onclick="
-    switch(document.getElementById('location-container').style.display) {
-        case('none'): document.getElementById('location-container').style.display = 'block'; break;
-        default: document.getElementById('location-container').style.display = 'none'; break;
-    }">Locations:</h2>
-    <div id="location-container">
-        <input type="text" class="textInput" id="gameInput" placeholder="Enter Game name">
-        <button onclick="fetchGameData()" class="button clickable" id="fetchGame-button">Fetch data</button><br>
-        <div class="fetchGameText-container">
-            <p id="fetchGameText" class="text fetchText"></p>
-            <div id="gameDidYou-container"></div>
-        </div>
-        <div id="areas-container"></div>
-    </div>
+    <h2 class="text">This page is unfinished, please go to another page</h2>
 
     <script type="module" src="../script.js"></script>
 </body>
