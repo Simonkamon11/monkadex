@@ -100,7 +100,7 @@ export async function fetchPokemonData() {
         imgShiny.title = `${name} shiny sprite`;
         document.getElementById('shiny-sparkles').style.display = 'block';
 
-        document.getElementById('shinyImage-container').onclick = () => window.location.href = `https://simonkamon11.github.io/monkadex/shinytools/?pokemon=${pokemonName}&theme=${params.get('theme')}`;
+        document.getElementById('shinyImage-container').onclick = () => window.location.href = `https://simonkamon11.github.io/monkadex/shinytools/?pokemon=${pokemonName}&theme=${params.get('theme')}&count=0`;
 
         let pokedexNr;
         for (const item of speciesData.pokedex_numbers) {
