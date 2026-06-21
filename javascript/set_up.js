@@ -68,7 +68,7 @@ export function setupLocations() {
         switchTheme(themeParam);
     }
     else if(storedTheme) {
-        fetchNewInput(storedTheme);
+        switchTheme(storedTheme);
     }
     else {
         if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
@@ -114,7 +114,7 @@ export function setupShinytools() {
         switchTheme(themeParam);
     }
     else if(storedTheme) {
-        fetchNewInput(storedTheme);
+        switchTheme(storedTheme);
     }
     else {
         if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
