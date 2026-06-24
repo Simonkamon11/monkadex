@@ -1633,7 +1633,7 @@ export async function fetchConstructionData() {
 
     constructionNameHTML.textContent = constructionName.charAt(0).toUpperCase() + constructionName.substring(1);
     constructionNameHTML.style.display = 'block';
-    constructionNameHTML.setAttribute('onclick', `fetchNewInput(\'${constructionName}\'); window.scrollTo(0, 0);`);
+    constructionNameHTML.setAttribute('onclick', `window.location.href = 'https://simonkamon11.github.io/monkadex/?pokemon=${constructionName}&theme=${params.get('theme')}'`);
 
     const constructionType1 = constructionData.types[0].type.name.charAt(0).toUpperCase() + constructionData.types[0].type.name.substring(1);
     constructionType1HTML.src = `../images/pokemon_types/Type_${constructionType1}_HOME.webp`;
