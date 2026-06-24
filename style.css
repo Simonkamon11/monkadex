@@ -346,6 +346,10 @@ h2{
     display: flex;
     align-items: center;
 }
+.gameMovesText, .gameMoveText{
+    font-size: 20px;
+    width: fit-content;
+}
 .regionText{
     font-size: 40px;
     width: fit-content;

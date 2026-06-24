@@ -1,5 +1,5 @@
 import { fetchNewInput, fetchNewLocationInput, fetchNewAreaInput, fetchNewRegionInput, fetchNewShinyInput, fetchNewGameInput, fetchNewMoveInput } from './fetch_new_input.js';
-import { fetchRegionsData, fetchMovesData } from './fetch.js';
+import { fetchRegionsData, fetchMovesData, fetchConstructionData } from './fetch.js';
 import { switchTheme, encounterCounter } from './misc.js';
 
 window.switchTheme = switchTheme;
@@ -151,6 +151,7 @@ export function setupMoves() {
             switchTheme('pokedex');
         }
     }
+    fetchConstructionData();
 }
 
 export function setupAbout() {

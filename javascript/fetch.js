@@ -1,6 +1,6 @@
-import { get3ClosestNames } from './names_list.js';
+import { get3ClosestNames, getGamesList } from './names_list.js';
 import { fetchNewInput, fetchNewLocationInput, fetchNewAreaInput, fetchNewRegionInput, fetchNewShinyInput, fetchNewGameInput, fetchNewMoveInput } from './fetch_new_input.js';
-import { regionClicked, locationClicked, areaClicked } from './location_clicked.js';
+import { regionClicked, locationClicked, areaClicked } from './fetch_clicked.js';
 import { getPokemonList } from './names_list.js';
 import { switchTheme } from './misc.js';
 import { state } from './state.js';
@@ -168,6 +168,9 @@ export async function fetchPokemonData() {
         }
         damageMultipliers = Object.fromEntries(
             Object.entries(damageMultipliers).filter(([k, v]) => v !== 1)
+        );
+        damageMultipliers = Object.fromEntries(
+            Object.entries(damageMultipliers).sort(([,a], [,b]) => b - a)
         );
 
         document.querySelectorAll('.damage-multipliers-content').forEach(el => el.remove());
@@ -633,6 +636,7 @@ export async function fetchPokemonData() {
                                 }
                                 const preEvoSpeciesData = await preEvoSpeciesResponse.json();
 
+                                let preEvoSpecies;
                                 for (const item of preEvoSpeciesData.genera) {
                                     if (item.language.name === 'en') {
                                         preEvoSpecies = item.genus;
@@ -646,6 +650,7 @@ export async function fetchPokemonData() {
                                 preEvoImg.title = `${preEvoName.charAt(0).toUpperCase() + preEvoName.substring(1)} (previous evolution) sprite`;
                                 preEvoImg.style.display = 'block';
 
+                                let preEvoPokedexNr;
                                 for (const item of preEvoSpeciesData.pokedex_numbers) {
                                     if (item.pokedex.name === 'national') {
                                         preEvoPokedexNr = item.entry_number;
@@ -713,6 +718,56 @@ export async function fetchPokemonData() {
             newP.style['white-space'] = 'pre-line';
             newP.textContent = entry[1].replace('\f', '\n');
             newPokedexEntryContainer.appendChild(newP);
+        }
+
+        document.getElementById('movesText').style.display = 'block';
+        document.getElementById('movesGamesText').style.display = 'block';
+        const movesGamesContainer = document.getElementById('movesGames-container');
+
+        let movesGamesList = [];
+        for(const move of data.moves) {
+            for(const detail of move.version_group_details) {
+                if(!movesGamesList.includes(detail.version_group.name)) {
+                    movesGamesList.push(detail.version_group.name);
+                }
+            }
+        }
+
+        document.querySelectorAll('.movesGamesContent').forEach(el => el.remove());
+
+        let gameMovesText, gameMovesContainer;
+        for(const game of movesGamesList) {
+            gameMovesText = document.createElement('h2');
+            gameMovesText.classList.add('text', 'clickable', 'movesGamesContent', 'gameMovesText');
+            gameMovesText.textContent = `${game}:`
+            gameMovesText.onclick = () => {
+                switch(document.getElementById(`${game}-gameMoves-container`).style.display) {
+                    case('none'):
+                        document.getElementById(`${game}-gameMoves-container`).style.display = 'block';
+                        break;
+                    default:
+                        document.getElementById(`${game}-gameMoves-container`).style.display = 'none';
+                        break;
+                }
+            };
+            movesGamesContainer.appendChild(gameMovesText);
+
+            gameMovesContainer = document.createElement('div');
+            gameMovesContainer.classList.add('movesGamesContent');
+            gameMovesContainer.id = `${game}-gameMoves-container`;
+            gameMovesContainer.style.display = 'none';
+            movesGamesContainer.appendChild(gameMovesContainer);
+            for(const item of data.moves.sort((a, b) => a.move.name.localeCompare(b.move.name))) {
+                for(const detail of item.version_group_details) {
+                    if(detail.version_group.name === game) {
+                        newH2 = document.createElement('h2');
+                        newH2.classList.add('text', 'clickable', 'movesGamesContent', 'gameMoveText');
+                        newH2.textContent = `${item.move.name}: learned by ${detail.move_learn_method.name} from level ${detail.level_learned_at}.`;
+                        newH2.onclick = () => window.location.href = `https://simonkamon11.github.io/monkadex/moves/?move=${item.move.name}&theme=${params.get('theme')}`;
+                        gameMovesContainer.appendChild(newH2);
+                    }
+                }
+            }
         }
     }
     catch (error) {
@@ -1551,9 +1606,78 @@ export async function fetchGameData() {
 }
 
 export async function fetchMoveData() {
-
+    
 }
 
 export async function fetchMovesData() {
     
+}
+
+export async function fetchConstructionData() {
+    const constructionNameHTML = document.getElementById('constructionName');
+    const constructionType1HTML = document.getElementById('constructionType1');
+    const constructionType2HTML = document.getElementById('constructionType2');
+    const constructionSpeciesHTML = document.getElementById('constructionSpecies');
+    const constructionImg = document.getElementById('constructionImg');
+    const constructionPokedexNrHTML = document.getElementById('constructionPokedexNr');
+
+    const constructionNames = ['timburr', 'gurdurr', 'conkeldurr'];
+
+    const constructionName = constructionNames[Math.floor(Math.random() * constructionNames.length)];
+
+    const constructionResponse = await fetch(`https://pokeapi.co/api/v2/pokemon/${constructionName}`);
+    if(!constructionResponse.ok) {
+        throw new Error('Could not fetch construction data');
+    }
+    const constructionData = await constructionResponse.json();
+
+    constructionNameHTML.textContent = constructionName.charAt(0).toUpperCase() + constructionName.substring(1);
+    constructionNameHTML.style.display = 'block';
+    constructionNameHTML.setAttribute('onclick', `fetchNewInput(\'${constructionName}\'); window.scrollTo(0, 0);`);
+
+    const constructionType1 = constructionData.types[0].type.name.charAt(0).toUpperCase() + constructionData.types[0].type.name.substring(1);
+    constructionType1HTML.src = `../images/pokemon_types/Type_${constructionType1}_HOME.webp`;
+    constructionType1HTML.style.display = 'block';
+    constructionType1HTML.title = `${constructionType1} type`;
+
+    if (constructionData.types.length === 2) {
+        const constructionType2 = constructionData.types[1].type.name.charAt(0).toUpperCase() + constructionData.types[1].type.name.substring(1);
+        constructionType2HTML.src = `../images/pokemon_types/Type_${constructionType2}_HOME.webp`;
+        constructionType2HTML.style.display = 'block';
+        constructionType2HTML.title = `${constructionType2HTML} type`;
+    }
+    else {
+        constructionType2HTML.src = '';
+        constructionType2HTML.style.display = 'none';
+    }
+
+    const constructionSpeciesResponse = await fetch(constructionData.species.url);
+    if (!constructionSpeciesResponse.ok) {
+        throw new Error('Could not fetch construction species data');
+    }
+    const constructionSpeciesData = await constructionSpeciesResponse.json();
+
+    let constructionSpecies;
+    for (const item of constructionSpeciesData.genera) {
+        if (item.language.name === 'en') {
+            constructionSpecies = item.genus;
+            break;
+        }
+    }
+    constructionSpeciesHTML.textContent = 'The ' + constructionSpecies;
+    constructionSpeciesHTML.style.display = 'block';
+
+    constructionImg.src = constructionData.sprites.front_default;
+    constructionImg.title = `${constructionName.charAt(0).toUpperCase() + constructionName.substring(1)} sprite`;
+    constructionImg.style.display = 'block';
+
+    let constructionPokedexNr;
+    for (const item of constructionSpeciesData.pokedex_numbers) {
+        if (item.pokedex.name === 'national') {
+            constructionPokedexNr = item.entry_number;
+            break;
+        }
+    }
+    constructionPokedexNrHTML.textContent = `Pokédex Nr. ${constructionPokedexNr}`;
+    constructionPokedexNrHTML.style.display = 'block';
 }

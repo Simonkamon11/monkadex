@@ -1,4 +1,5 @@
 User-agent: *
 Allow: /
+Disallow: /admin/
 
 Sitemap: https://simonkamon11.github.io/monkadex/sitemap.xml

@@ -214,5 +214,18 @@
     }">Pokédex entries:</h2>
     <div id="pokedexEntries-container"></div>
 
+    <h2 id="movesText" class="title-text clickable" style="display: none;" onclick="
+    switch(document.getElementById('moves-container').style.display) {
+        case('none'): document.getElementById('moves-container').style.display = 'block'; break;
+        default: document.getElementById('moves-container').style.display = 'none'; break;
+    }">Moves:</h2>
+    <div id="moves-container">
+        <h2 id="movesGamesText" class="text clickable" style="display: none;" onclick="
+        switch(document.getElementById('movesGames-container').style.display) {
+            case('none'): document.getElementById('movesGames-container').style.display = 'block'; break;
+            default: document.getElementById('movesGames-container').style.display = 'none'; break;
+        }">Games:</h2>
+        <div id="movesGames-container"></div>
+
     <script type="module" src="script.js"></script>
 </html>
