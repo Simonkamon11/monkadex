@@ -1,5 +1,5 @@
 import { get3ClosestNames, getGamesList } from './names_list.js';
-import { fetchNewInput, fetchNewLocationInput, fetchNewAreaInput, fetchNewRegionInput, fetchNewShinyInput, fetchNewGameInput, fetchNewMoveInput } from './fetch_new_input.js';
+import { fetchNewInput, fetchNewLocationInput, fetchNewAreaInput, fetchNewRegionInput, fetchNewShinyInput, fetchNewGameInput, fetchNewMoveInput, fetchNewGamesInput, fetchNewLocateInput } from './fetch_new_input.js';
 import { regionClicked, locationClicked, areaClicked } from './fetch_clicked.js';
 import { getPokemonList } from './names_list.js';
 import { switchTheme } from './misc.js';
@@ -23,7 +23,7 @@ export async function fetchPokemonData() {
 
     document.getElementById('fetchText').textContent = 'Fetching data...';
     try {
-        const pokemonName = document.getElementById('pokemonInput').value.toLowerCase().replace(" ", "-");
+        const pokemonName = document.getElementById('pokemonInput').value.toLowerCase().replaceAll(" ", "-");
 
         params.set('pokemon', pokemonName);
         const newUrl = `${window.location.pathname}?${params.toString()}`;
@@ -716,7 +716,7 @@ export async function fetchPokemonData() {
             newP = document.createElement('p');
             newP.classList.add('text', 'pokedexEntry', 'pokedexEntriesContent');
             newP.style['white-space'] = 'pre-line';
-            newP.textContent = entry[1].replace('\f', '\n');
+            newP.textContent = entry[1].replaceAll('\f', '\n');
             newPokedexEntryContainer.appendChild(newP);
         }
 
@@ -780,7 +780,7 @@ export async function fetchPokemonData() {
             if (didYou !== null) { didYou.remove(); }
             document.querySelectorAll('.meanText').forEach(el => el.remove());
 
-            const inputtedName = document.getElementById('pokemonInput').value.toLowerCase().replace(" ", "-");
+            const inputtedName = document.getElementById('pokemonInput').value.toLowerCase().replaceAll(" ", "-");
 
             const top3ClosestPokemonNames = await get3ClosestNames(inputtedName);
 
@@ -811,10 +811,12 @@ export async function fetchLocationData() {
 
     document.getElementById('regionInput').value = '';
     document.getElementById('areaInput').value = '';
+    document.getElementById('gameInput').value = '';
+    document.getElementById('pokemonInput').value = '';
 
     document.getElementById('fetchText').textContent = 'Fetching data...';
     try {
-        const locationName = document.getElementById('locationInput').value.toLowerCase().replace(" ", "-");
+        const locationName = document.getElementById('locationInput').value.toLowerCase().replaceAll(" ", "-");
 
         params.set('location', locationName);
         if(regionParam) {
@@ -822,6 +824,12 @@ export async function fetchLocationData() {
         }
         if(areaParam) {
             params.delete('area');
+        }
+        if(gameParam) {
+            params.delete('game');
+        }
+        if(pokemonParam) {
+            params.delete('pokemon');
         }
         const newUrl = `${window.location.pathname}?${params.toString()}`;
         window.history.pushState({}, "", newUrl);
@@ -885,7 +893,7 @@ export async function fetchLocationData() {
             if (didYou !== null) { didYou.remove(); }
             document.querySelectorAll('.meanText').forEach(el => el.remove());
 
-            const inputtedName = document.getElementById('locationInput').value.toLowerCase().replace(" ", "-");
+            const inputtedName = document.getElementById('locationInput').value.toLowerCase().replaceAll(" ", "-");
 
             const top3ClosestLocationNames = await get3ClosestNames(inputtedName, 'locations');
 
@@ -916,10 +924,12 @@ export async function fetchAreaData() {
 
     document.getElementById('locationInput').value = '';
     document.getElementById('regionInput').value = '';
+    document.getElementById('gameInput').value = '';
+    document.getElementById('pokemonInput').value = '';
 
     document.getElementById('fetchText').textContent = 'Fetching data...';
     try {
-        const areaName = document.getElementById('areaInput').value.toLowerCase().replace(" ", "-");
+        const areaName = document.getElementById('areaInput').value.toLowerCase().replaceAll(" ", "-");
 
         params.set('area', areaName);
         if(locationParam) {
@@ -927,6 +937,12 @@ export async function fetchAreaData() {
         }
         if(regionParam) {
             params.delete('region');
+        }
+        if(gameParam) {
+            params.delete('game');
+        }
+        if(pokemonParam) {
+            params.delete('pokemon');
         }
         const newUrl = `${window.location.pathname}?${params.toString()}`;
         window.history.pushState({}, "", newUrl);
@@ -1123,7 +1139,7 @@ export async function fetchAreaData() {
             if (didYou !== null) { didYou.remove(); }
             document.querySelectorAll('.meanText').forEach(el => el.remove());
 
-            const inputtedName = document.getElementById('areaInput').value.toLowerCase().replace(" ", "-");
+            const inputtedName = document.getElementById('areaInput').value.toLowerCase().replaceAll(" ", "-");
 
             const top3ClosestLocationNames = await get3ClosestNames(inputtedName, 'areas');
 
@@ -1154,10 +1170,12 @@ export async function fetchRegionData() {
 
     document.getElementById('locationInput').value = '';
     document.getElementById('areaInput').value = '';
+    document.getElementById('gameInput').value = '';
+    document.getElementById('pokemonInput').value = '';
 
     document.getElementById('fetchText').textContent = 'Fetching data...';
     try {
-        const regionName = document.getElementById('regionInput').value.toLowerCase().replace(" ", "-");
+        const regionName = document.getElementById('regionInput').value.toLowerCase().replaceAll(" ", "-");
 
         params.set('region', regionName);
         if(locationParam) {
@@ -1165,6 +1183,12 @@ export async function fetchRegionData() {
         }
         if(areaParam) {
             params.delete('area');
+        }
+        if(gameParam) {
+            params.delete('game');
+        }
+        if(pokemonParam) {
+            params.delete('pokemon');
         }
         const newUrl = `${window.location.pathname}?${params.toString()}`;
         window.history.pushState({}, "", newUrl);
@@ -1228,7 +1252,7 @@ export async function fetchRegionData() {
             if (didYou !== null) { didYou.remove(); }
             document.querySelectorAll('.meanText').forEach(el => el.remove());
 
-            const inputtedName = document.getElementById('regionInput').value.toLowerCase().replace(" ", "-");
+            const inputtedName = document.getElementById('regionInput').value.toLowerCase().replaceAll(" ", "-");
 
             const top3ClosestLocationNames = await get3ClosestNames(inputtedName, 'regions');
 
@@ -1246,6 +1270,364 @@ export async function fetchRegionData() {
                 newP.textContent = name;
                 didYouContainer.appendChild(newP);
                 newP.setAttribute('onclick', `fetchNewRegionInput(\'${name}\'); window.scrollTo(0, 0); document.getElementById(\'didYou\').remove(); document.querySelectorAll(\'.meanText\').forEach(el => el.remove());`);
+            }
+        }
+    }
+}
+
+export async function fetchGamesData() {
+    const didYou = document.getElementById('didYou');
+    if (didYou !== null) {didYou.remove();}
+    document.querySelectorAll('.meanText').forEach(el => el.remove());
+    document.querySelectorAll('.locationsContent').forEach(el => el.remove());
+
+    document.getElementById('locationInput').value = '';
+    document.getElementById('areaInput').value = '';
+    document.getElementById('regionInput').value = '';
+    document.getElementById('pokemonInput').value = '';
+
+    document.getElementById('fetchText').textContent = 'Fetching data...';
+    try {
+        const gameName = document.getElementById('gameInput').value.toLowerCase().replaceAll(" ", "-");
+
+        params.set('game', gameName)
+        if(regionParam) {
+            params.delete('region');
+        }
+        if(locationParam) {
+            params.delete('location');
+        }
+        if(areaParam) {
+            params.delete('area');
+        }
+        if(pokemonParam) {
+            params.delete('pokemon');
+        }
+        const newUrl = `${window.location.pathname}?${params.toString()}`;
+        window.history.pushState({}, "", newUrl);
+
+        let response = await fetch(`https://pokeapi.co/api/v2/version-group/${gameName}`);
+        let data;
+        globalThis.versionList = [];
+        if(response.status === 404) {
+            response = await fetch(`https://pokeapi.co/api/v2/version/${gameName}`);
+            if(response.status === 404) {
+                throw new Error('Game not found');
+            }
+            if(!response.ok) {
+                throw new Error('Could not fetch data');
+            }
+            data = await response.json();
+            versionList.push(data.name);
+
+            response = await fetch(data.version_group.url);
+            if(!response.ok) {
+                throw new Error('Could not fetch data');
+            }
+            data = await response.json();
+        }
+        else {
+            if(!response.ok) {
+                throw new Error('Could not fetch data');
+            }
+            data = await response.json();
+
+            for(const version of data.versions) {
+                versionList.push(version.name);
+            }
+        }
+        document.getElementById('fetchText').textContent = 'Data fetched successfully';
+
+        let urls = [];
+        for(const region of data.regions) {
+            urls.push(region.url);
+        }
+
+        const regionsResponse = await fetch('https://pokeapi.co/api/v2/region/');
+        if(!regionsResponse.ok) {
+            throw new Error('Could not fetch regions data');
+        }
+        globalThis.regionsData = await regionsResponse.json();
+        
+        let responses = await Promise.all(urls.map(url => fetch(url)));
+        const regionListData = await Promise.all(responses.map(res => res.json()));
+        
+        const regionsContainer = document.getElementById('locations-container');
+        let newH2, newDiv;
+        for(const region of regionListData) {
+            newH2 = document.createElement('h2');
+            newH2.classList.add('text', 'clickable', 'regionText', 'locationsContent');
+            newH2.textContent = `${region.name}:`;
+            newH2.setAttribute('onclick', `regionClicked('${region.name}');`);
+            regionsContainer.appendChild(newH2);
+
+            newDiv = document.createElement('div');
+            newDiv.classList.add('locationsContent');
+            newDiv.id = `${region.name}-container`;
+            newDiv.style.display = 'none';
+            regionsContainer.appendChild(newDiv);
+        }
+    }
+    catch(error) {
+        console.error(error);
+        document.getElementById('fetchText').textContent = 'Could not fetch data';
+
+        if (error.message === 'Game not found') {
+            const didYou = document.getElementById('didYou');
+
+            if (didYou !== null) { didYou.remove(); }
+            document.querySelectorAll('.meanText').forEach(el => el.remove());
+
+            const inputtedName = document.getElementById('gameInput').value.toLowerCase().replaceAll(" ", "-");
+
+            const top3ClosestLocationNames = await get3ClosestNames(inputtedName, 'games');
+
+            const didYouContainer = document.getElementById('didYou-container');
+            let newP;
+            newP = document.createElement('p');
+            newP.id = 'didYou';
+            newP.textContent = 'did you mean?:';
+            didYouContainer.appendChild(newP);
+
+            for (const name of top3ClosestLocationNames) {
+                newP = document.createElement('p');
+                newP.classList.add('meanText', 'clickable');
+                newP.id = name;
+                newP.textContent = name;
+                didYouContainer.appendChild(newP);
+                newP.setAttribute('onclick', `fetchNewGamesInput(\'${name}\'); window.scrollTo(0, 0); document.getElementById(\'didYou\').remove(); document.querySelectorAll(\'.meanText\').forEach(el => el.remove());`);
+            }
+        }
+    }
+}
+
+export async function fetchLocateData() {
+    const didYou = document.getElementById('didYou');
+    if (didYou !== null) {didYou.remove();}
+    document.querySelectorAll('.meanText').forEach(el => el.remove());
+    document.querySelectorAll('.locationsContent').forEach(el => el.remove());
+
+    document.getElementById('locationInput').value = '';
+    document.getElementById('areaInput').value = '';
+    document.getElementById('regionInput').value = '';
+    document.getElementById('gameInput').value = '';
+
+    document.getElementById('fetchText').textContent = 'Fetching data...';
+    try {
+        const pokemonName = document.getElementById('pokemonInput').value.toLowerCase().replaceAll(" ", "-");
+
+        params.set('pokemon', pokemonName)
+        if(regionParam) {
+            params.delete('region');
+        }
+        if(locationParam) {
+            params.delete('location');
+        }
+        if(areaParam) {
+            params.delete('area');
+        }
+        if(pokemonParam) {
+            params.delete('game');
+        }
+        const newUrl = `${window.location.pathname}?${params.toString()}`;
+        window.history.pushState({}, "", newUrl);
+
+        const pokemonResponse = await fetch(`https://pokeapi.co/api/v2/pokemon/${pokemonName}`);
+        if(pokemonResponse.status === 404) {
+            throw new Error('Pokémon not found');
+        }
+        if(!pokemonResponse.ok) {
+            throw new Error("Could not fetch pokémon data");
+        }
+        const pokemonData = await pokemonResponse.json();
+
+        const encountersResponse = await fetch(pokemonData.location_area_encounters);
+        if(!encountersResponse.ok) {
+            throw new Error("Could not fetch encounters data");
+        }
+        const encountersData = await encountersResponse.json();
+
+        let urls = [];
+        for(const area of encountersData) {
+            urls.push(area.location_area.url);
+        }
+        
+        let responses;
+        responses = await Promise.all(urls.map(url => fetch(url)));
+        const areasData = await Promise.all(responses.map(res => res.json()));
+        const areasList = areasData.map(area => ({name: area.name, location: area.location.name}));
+        urls = [...new Set(areasData.map(area => area.location.url))];
+
+        responses = await Promise.all(urls.map(url => fetch(url)));
+        const locationsData = await Promise.all(responses.map(res => res.json()));
+        const locationsList = locationsData.map(loc => ({name: loc.name, region: loc.region.name}));
+        const regionsList = [...new Set(locationsData.map(loc => loc.region.name))];
+
+        document.getElementById('fetchText').textContent = 'Data fetched successfully';
+
+        let newH2, newDiv;
+        let regionsContainer, regionContainer, locationContainer, areaContainer;
+        let gamesText, gamesContainer, gameText, gameContainer, maxEncounterChanceText, encounterChanceText, encounterMethodText;
+        for(const region of regionsList) {
+            regionsContainer = document.getElementById('locations-container');
+
+            newH2 = document.createElement('h2');
+            newH2.classList.add('text', 'clickable', 'regionText', 'locationsContent');
+            newH2.textContent = `${region}:`;
+            newH2.onclick = () => {
+                switch(document.getElementById(`${region}-container`).style.display) {
+                    case('none'): 
+                        document.getElementById(`${region}-container`).style.display = 'block'; 
+                        break;
+                    default: 
+                        document.getElementById(`${region}-container`).style.display = 'none'; 
+                        break;
+                }
+            };
+            regionsContainer.appendChild(newH2);
+
+            newDiv = document.createElement('div');
+            newDiv.classList.add('locationsContent');
+            newDiv.id = `${region}-container`;
+            newDiv.style.display = 'none';
+            regionsContainer.appendChild(newDiv);
+            
+            for(const location of locationsList.filter(loc => loc.region === region)) {
+                regionContainer = document.getElementById(`${region}-container`);
+
+                newH2 = document.createElement('h2');
+                newH2.classList.add('text', 'clickable', 'locationText', 'locationsContent');
+                newH2.textContent = `${location.name}:`;
+                newH2.onclick = () => {
+                    switch(document.getElementById(`${location.name}-container`).style.display) {
+                        case('none'): 
+                            document.getElementById(`${location.name}-container`).style.display = 'block'; 
+                            break;
+                        default: 
+                            document.getElementById(`${location.name}-container`).style.display = 'none'; 
+                            break;
+                    }
+                }
+                regionContainer.appendChild(newH2);
+
+                newDiv = document.createElement('div');
+                newDiv.classList.add('locationsContent');
+                newDiv.id = `${location.name}-container`;
+                newDiv.style.display = 'none';
+                regionContainer.appendChild(newDiv);
+
+                for(const area of encountersData.filter(enc => new Map(areasList.map(obj => [obj.name, obj.location])).get(enc.location_area.name) === location.name)) {
+                    locationContainer = document.getElementById(`${location.name}-container`);
+
+                    newH2 = document.createElement('h2');
+                    newH2.classList.add('text', 'clickable', 'areaText', 'locationsContent');
+                    newH2.textContent = `${area.location_area.name}:`;
+                    newH2.onclick = () => {
+                        switch(document.getElementById(`${area.location_area.name}-container`).style.display) {
+                            case('none'): 
+                                document.getElementById(`${area.location_area.name}-container`).style.display = 'block'; 
+                                break;
+                            default: 
+                                document.getElementById(`${area.location_area.name}-container`).style.display = 'none'; 
+                                break;
+                        }
+                    };
+                    locationContainer.appendChild(newH2);
+
+                    newDiv = document.createElement('div');
+                    newDiv.classList.add('locationsContent');
+                    newDiv.id = `${area.location_area.name}-container`;
+                    locationContainer.appendChild(newDiv);
+
+                    areaContainer = document.getElementById(`${area.location_area.name}-container`);
+
+                    gamesText = document.createElement('h2');
+                    gamesText.classList.add('text', 'clickable', 'gamesText', 'locationsContent')
+                    gamesText.setAttribute('onclick', `
+                    switch(document.getElementById('${area.location_area.name}-games-container').style.display) {
+                        case('none'): document.getElementById('${area.location_area.name}-games-container').style.display = 'block'; break;
+                        default: document.getElementById('${area.location_area.name}-games-container').style.display = 'none'; break;
+                    }`);
+                    if(area.version_details.length === 1) {
+                        gamesText.textContent = 'Game:';
+                    }
+                    else {
+                        gamesText.textContent = 'Games:';
+                    }
+                    areaContainer.appendChild(gamesText);
+                
+                    newDiv = document.createElement('div');
+                    newDiv.id = `${area.location_area.name}-games-container`;
+                    newDiv.classList.add('locationsContent');
+                    areaContainer.appendChild(newDiv);
+                    gamesContainer = document.getElementById(`${area.location_area.name}-games-container`)
+                
+                    for(const versionDetail of area.version_details) {
+                        gameText = document.createElement('h2');
+                        gameText.classList.add('text', 'clickable', 'gameText', 'locationsContent');
+                        gameText.setAttribute('onclick', `
+                        switch(document.getElementById('${area.location_area.name}-${versionDetail.version.name}-container').style.display) {
+                            case('none'): document.getElementById('${area.location_area.name}-${versionDetail.version.name}-container').style.display = 'block'; break;
+                            default: document.getElementById('${area.location_area.name}-${versionDetail.version.name}-container').style.display = 'none'; break;
+                        }`);
+                        gameText.textContent = `${versionDetail.version.name}:`;
+                        gamesContainer.appendChild(gameText);
+                        
+                        newDiv = document.createElement('div');
+                        newDiv.id = `${area.location_area.name}-${versionDetail.version.name}-container`;
+                        newDiv.classList.add('locationsContent');
+                        gamesContainer.appendChild(newDiv);
+                        gameContainer = document.getElementById(`${area.location_area.name}-${versionDetail.version.name}-container`);
+                        
+                        maxEncounterChanceText = document.createElement('h2');
+                        maxEncounterChanceText.classList.add('text', 'maxEncounterChanceText', 'locationsContent');
+                        maxEncounterChanceText.textContent = `Max encounter chance: ${versionDetail.max_chance}%`;
+                        gameContainer.appendChild(maxEncounterChanceText);
+                        
+                        for(const encounterDetail of versionDetail.encounter_details) {
+                            encounterChanceText = document.createElement('h2');
+                            encounterChanceText.classList.add('text', 'encounterChanceText', 'locationsContent');
+                            encounterChanceText.textContent = `Encounter chance: ${encounterDetail.chance}%`;
+                            gameContainer.appendChild(encounterChanceText);
+                        
+                            encounterMethodText = document.createElement('h2');
+                            encounterMethodText.classList.add('text', 'encounterMethodText', 'locationsContent');
+                            encounterMethodText.textContent = `Encounter method: ${encounterDetail.method.name}`;
+                            gameContainer.appendChild(encounterMethodText);
+                        }
+                    }
+                }
+            }
+        }
+    }
+    catch(error) {
+        console.error(error);
+        document.getElementById('fetchText').textContent = 'Could not fetch data';
+
+        if (error.message === 'Pokémon not found') {
+            const didYou = document.getElementById('didYou');
+
+            if (didYou !== null) { didYou.remove(); }
+            document.querySelectorAll('.meanText').forEach(el => el.remove());
+
+            const inputtedName = document.getElementById('pokemonInput').value.toLowerCase().replaceAll(" ", "-");
+
+            const top3ClosestLocationNames = await get3ClosestNames(inputtedName, 'pokemon');
+
+            const didYouContainer = document.getElementById('didYou-container');
+            let newP;
+            newP = document.createElement('p');
+            newP.id = 'didYou';
+            newP.textContent = 'did you mean?:';
+            didYouContainer.appendChild(newP);
+
+            for (const name of top3ClosestLocationNames) {
+                newP = document.createElement('p');
+                newP.classList.add('meanText', 'clickable');
+                newP.id = name;
+                newP.textContent = name;
+                didYouContainer.appendChild(newP);
+                newP.setAttribute('onclick', `fetchNewGamesInput(\'${name}\'); window.scrollTo(0, 0); document.getElementById(\'didYou\').remove(); document.querySelectorAll(\'.meanText\').forEach(el => el.remove());`);
             }
         }
     }
@@ -1288,7 +1670,7 @@ export async function fetchShinyData() {
 
     document.getElementById('fetchText').textContent = 'Fetching data...';
     try {
-        const pokemonName = document.getElementById('shinyInput').value.toLowerCase().replace(" ", "-");
+        const pokemonName = document.getElementById('shinyInput').value.toLowerCase().replaceAll(" ", "-");
 
         params.set('pokemon', pokemonName);
         const newUrl = `${window.location.pathname}?${params.toString()}`;
@@ -1378,7 +1760,7 @@ export async function fetchShinyData() {
             if (didYou !== null) { didYou.remove(); }
             document.querySelectorAll('.meanText').forEach(el => el.remove());
 
-            const inputtedName = document.getElementById('pokemonInput').value.toLowerCase().replace(" ", "-");
+            const inputtedName = document.getElementById('pokemonInput').value.toLowerCase().replaceAll(" ", "-");
 
             const top3ClosestPokemonNames = await get3ClosestNames(inputtedName);
 
@@ -1408,7 +1790,7 @@ export async function fetchGameData() {
 
     document.getElementById('fetchGameText').textContent = 'Fetching data...';
     try {
-        const gameName = document.getElementById('gameInput').value.toLowerCase().replace(" ", "-");
+        const gameName = document.getElementById('gameInput').value.toLowerCase().replaceAll(" ", "-");
 
         if(!params.get('pokemon')) {
             throw new Error('Please use shiny search for pokémon');
@@ -1561,7 +1943,7 @@ export async function fetchGameData() {
             if (didYou !== null) {didYou.remove();}
             document.querySelectorAll('.gameMeanText').forEach(el => el.remove());
 
-            const inputtedName = document.getElementById('gameInput').value.toLowerCase().replace(" ", "-");
+            const inputtedName = document.getElementById('gameInput').value.toLowerCase().replaceAll(" ", "-");
 
             const top3ClosestPokemonNames = await get3ClosestNames(inputtedName, 'games');
 

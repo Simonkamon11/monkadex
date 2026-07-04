@@ -1,4 +1,4 @@
-import { fetchNewInput, fetchNewLocationInput, fetchNewAreaInput, fetchNewRegionInput, fetchNewShinyInput, fetchNewGameInput, fetchNewMoveInput } from './fetch_new_input.js';
+import { fetchNewInput, fetchNewLocationInput, fetchNewAreaInput, fetchNewRegionInput, fetchNewShinyInput, fetchNewGameInput, fetchNewMoveInput, fetchNewLocateInput, fetchNewGamesInput } from './fetch_new_input.js';
 import { fetchRegionsData, fetchMovesData, fetchConstructionData } from './fetch.js';
 import { switchTheme, encounterCounter } from './misc.js';
 
@@ -33,29 +33,60 @@ export function setupIndex() {
 export function setupLocations() {
     globalThis.params = new URLSearchParams(window.location.search);
 
+    globalThis.regionParam = params.get('region');
     globalThis.locationParam = params.get('location');
     globalThis.areaParam = params.get('area');
-    globalThis.regionParam = params.get('region');
+    globalThis.gameParam = params.get('game');
+    globalThis.pokemonParam = params.get('pokemon');
     globalThis.themeParam = params.get('theme');
-    if(areaParam) {
+    if(pokemonParam) {
+        if(gameParam) {
+            params.delete('game');
+        }
+        if(areaParam) {
+            params.delete('area');
+        }
         if(locationParam) {
             params.delete('location');
-            const newUrl = `${window.location.pathname}?${params.toString()}`;
-            window.history.pushState({}, "", newUrl);
         }
         if(regionParam) {
             params.delete('region');
-            const newUrl = `${window.location.pathname}?${params.toString()}`;
-            window.history.pushState({}, "", newUrl);
         }
+        const newUrl = `${window.location.pathname}?${params.toString()}`;
+        window.history.pushState({}, "", newUrl);
+        fetchNewLocateInput(pokemonParam);
+    }
+    else if(gameParam) {
+        if(areaParam) {
+            params.delete('area');
+        }
+        if(locationParam) {
+            params.delete('location')
+        }
+        if(regionParam) {
+            params.delete('region');
+        }
+        const newUrl = `${window.location.pathname}?${params.toString()}`;
+        window.history.pushState({}, "", newUrl);
+        fetchNewGamesInput(gameParam);
+    }
+    else if(areaParam) {
+        if(locationParam) {
+            params.delete('location')
+        }
+        if(regionParam) {
+            params.delete('region');
+        }
+        const newUrl = `${window.location.pathname}?${params.toString()}`;
+        window.history.pushState({}, "", newUrl);
         fetchNewAreaInput(areaParam);
     }
     else if(locationParam) {
         if(regionParam) {
             params.delete('region');
-            const newUrl = `${window.location.pathname}?${params.toString()}`;
-            window.history.pushState({}, "", newUrl);
         }
+        const newUrl = `${window.location.pathname}?${params.toString()}`;
+        window.history.pushState({}, "", newUrl);
         fetchNewLocationInput(locationParam);
     }
     else if(regionParam) {

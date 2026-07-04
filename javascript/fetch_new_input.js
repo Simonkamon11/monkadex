@@ -2,17 +2,17 @@ import { fetchPokemonData, fetchLocationData, fetchAreaData, fetchRegionData, fe
 
 export async function fetchNewInput(text) {
     document.getElementById('pokemonInput').value = text;
-    await fetchPokemonData();
+    fetchPokemonData();
 }
 
 export async function fetchNewLocationInput(text) {
     document.getElementById('locationInput').value = text;
-    await fetchLocationData();
+    fetchLocationData();
 }
 
 export async function fetchNewAreaInput(text) {
     document.getElementById('areaInput').value = text;
-    await fetchAreaData();
+    fetchAreaData();
 }
 
 export async function fetchNewRegionInput(text) {
@@ -20,17 +20,27 @@ export async function fetchNewRegionInput(text) {
     fetchRegionData();
 }
 
+export async function fetchNewGamesInput(text) {
+    document.getElementById('gameInput').value = text;
+    fetchGamesData();
+}
+
+export async function fetchNewLocateInput(text) {
+    document.getElementById('pokemonInput').value = text;
+    fetchLocateData();
+}
+
 export async function fetchNewShinyInput(text) {
     document.getElementById('shinyInput').value = text;
-    await fetchShinyData();
+    fetchShinyData();
 }
 
 export async function fetchNewGameInput(text) {
     document.getElementById('gameInput').value = text;
-    await fetchGameData();
+    fetchGameData();
 }
 
 export async function fetchNewMoveInput(text) {
     document.getElementById('moveInput').value = text;
-    await fetchMoveData();
+    fetchMoveData();
 }

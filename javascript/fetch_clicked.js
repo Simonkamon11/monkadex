@@ -129,10 +129,35 @@ export async function areaClicked(area) {
         areaContainer.appendChild(newDiv);
         const encounterContainer = document.getElementById(`${area}-encounters-container`);
 
+        let encountersList = areaData.pokemon_encounters;
+        if(params.get('game')) {
+            encountersList = encountersList.filter(enc => {
+                let hasVersion = false;
+                for(const version of versionList) {
+                    if(enc.version_details.map(det => det.version.name).includes(version)) {
+                        hasVersion = true;
+                    }
+                }
+                return hasVersion;
+            })
+        }
+
         let encounterNameTypeDiv, encounterNameHTML, encounterType1HTML, encounterType2HTML, encounterSpeciesHTML, encounterImg, encounterPokedexNrHTML;
         let encounterName, encounterUrl, encounterResponse, encounterData, encounterType1, encounterType2, encounterSpeciesResponse, encounterSpeciesData, encounterSpecies, encounterPokedexNr;
-        let gamesText, gamesContainer, gameText, gameContainer, maxEncounterChanceText, encounterChanceText, encounterMethodText;
-        for(const encounter of areaData.pokemon_encounters) {
+        let versionsList, gamesText, gamesContainer, gameText, gameContainer, maxEncounterChanceText, encounterChanceText, encounterMethodText;
+        for(const encounter of encountersList) {
+            versionsList = encounter.version_details;
+            if(params.get('game')) {
+                versionsList = versionsList.filter(ver => {
+                    let isVersion = false;
+                    for(const version of versionList) {
+                        if(ver.version.name === version) {
+                            isVersion = true;
+                        }
+                    }
+                    return isVersion;
+                })
+            }
             encounterNameTypeDiv = document.createElement('div');
             encounterNameHTML = document.createElement('h2');
             encounterType1HTML = document.createElement('img');
@@ -184,13 +209,13 @@ export async function areaClicked(area) {
                     break;
                 }
             }
-            encounterSpeciesHTML.classList.add('nextEvosContent', 'text', 'pokemonSpecies');
+            encounterSpeciesHTML.classList.add('locationsContent', 'text', 'pokemonSpecies');
             encounterSpeciesHTML.textContent = 'The ' + encounterSpecies;
             encounterContainer.appendChild(encounterSpeciesHTML);
 
             encounterImg.classList.add('locationsContent', 'pokemonImages');
             encounterImg.src = encounterData.sprites.front_default;
-            encounterImg.title = `${encounterName.charAt(0).toUpperCase() + encounterName.substring(1)} (next evolution) sprite`;
+            encounterImg.title = `${encounterName.charAt(0).toUpperCase() + encounterName.substring(1)} sprite`;
             encounterContainer.appendChild(encounterImg);
             switchTheme(state.usingTheme); // Updating the theme, so the image has the correct colour
 
@@ -211,7 +236,7 @@ export async function areaClicked(area) {
                 case('none'): document.getElementById('${area}-${encounterName}-games-container').style.display = 'block'; break;
                 default: document.getElementById('${area}-${encounterName}-games-container').style.display = 'none'; break;
             }`);
-            if(encounter.version_details.length === 1) {
+            if(versionsList.length === 1) {
                 gamesText.textContent = 'Game:';
             }
             else {
@@ -225,7 +250,7 @@ export async function areaClicked(area) {
             encounterContainer.appendChild(newDiv);
             gamesContainer = document.getElementById(`${area}-${encounterName}-games-container`)
 
-            for(const versionDetail of encounter.version_details) {
+            for(const versionDetail of versionsList) {
                 gameText = document.createElement('h2');
                 gameText.classList.add('text', 'clickable', 'gameText', 'locationsContent');
                 gameText.setAttribute('onclick', `

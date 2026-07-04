@@ -90,7 +90,7 @@ export function switchTheme(theme) {
         movesBody.style['background-color'] = themes[theme][0];
         movesBody.style['color'] = themes[theme][1];
     }
-    else { // this will always be the index page (unless this function is called in /about/, but it isn't)
+    else { // this will always be the index page (unless this function is called in other pages, but it isn't)
         const indexBody = document.getElementById('index-body');
         indexBody.style['background-color'] = themes[theme][0];
         indexBody.style['color'] = themes[theme][1];

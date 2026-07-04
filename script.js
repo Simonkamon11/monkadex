@@ -1,5 +1,5 @@
 import { setupLocations, setupShinytools, setupMoves, setupAbout, setupSitemap, setupIndex } from './javascript/set_up.js';
-import { fetchPokemonData, fetchLocationData, fetchAreaData, fetchRegionData, fetchShinyData, fetchGameData, fetchMoveData } from './javascript/fetch.js';
+import { fetchPokemonData, fetchLocationData, fetchAreaData, fetchRegionData, fetchShinyData, fetchGameData, fetchMoveData, fetchGamesData, fetchLocateData } from './javascript/fetch.js';
 import { encounterCounter } from './javascript/misc.js';
 import { switchTheme } from './javascript/misc.js';
 
@@ -10,6 +10,8 @@ window.fetchRegionData = fetchRegionData;
 window.fetchShinyData = fetchShinyData;
 window.fetchGameData = fetchGameData;
 window.fetchMoveData = fetchMoveData;
+window.fetchGamesData = fetchGamesData;
+window.fetchLocateData = fetchLocateData;
 
 if(window.location.pathname.endsWith("/locations/") || window.location.pathname.endsWith("/locations/index.html")) {
     setupLocations();
