@@ -294,4 +294,6 @@ export function setup404() {
 
     const border = document.getElementById('header-border');
     border.style['background-color'] = colour2;
+
+    document.getElementById("404-pathname").textContent = window.location.pathname;
 }
