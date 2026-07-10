@@ -13,7 +13,10 @@ window.fetchMoveData = fetchMoveData;
 window.fetchGamesData = fetchGamesData;
 window.fetchLocateData = fetchLocateData;
 
-if(window.location.pathname.endsWith("/locations/") || window.location.pathname.endsWith("/locations/index.html")) {
+if(window.location.pathname.endsWith("/monkadex/") || window.location.pathname.endsWith("/monkadex/index.html")) {
+    setupIndex();
+}
+else if(window.location.pathname.endsWith("/locations/") || window.location.pathname.endsWith("/locations/index.html")) {
     setupLocations();
 }
 else if(window.location.pathname.endsWith("/shinytools/") || window.location.pathname.endsWith("/shinytools/index.html")) {
@@ -28,9 +31,6 @@ else if (window.location.pathname.endsWith("/about/") || window.location.pathnam
 else if (window.location.pathname.endsWith("/sitemap.html")) {
     setupSitemap();
 }
-else if (window.location.pathname.endsWith("/404.html")) {
+else {
     setup404();
-}
-else { // this will always be the index page
-    setupIndex();
 }
