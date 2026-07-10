@@ -32,8 +32,8 @@
                 <h2 class="pageLink clickable paramLink">locations</h2>
                 <h2 class="pageLink clickable paramLink">shinytools</h2>
                 <h2 class="pageLink clickable paramLink">moves</h2>
-                <h2 class="pageLink clickable" onclick="window.location.href = 'https://simonkamon11.github.io/monkadex/about/'">about</h2>
-                <h2 class="pageLink clickable" onclick="window.location.href = 'https://simonkamon11.github.io/monkadex/sitemap.html'">sitemap</h2>
+                <h2 class="pageLink clickable" onclick="window.location.href = '/monkadex/about/'">about</h2>
+                <h2 class="pageLink clickable" onclick="window.location.href = '/monkadex/sitemap.html'">sitemap</h2>
             </div>
         </div>
         <script>
@@ -57,8 +57,8 @@
             document.getElementById('header-pages-text').style['color'] = colour2
             document.querySelectorAll('.pageLink').forEach(el => el.style['color'] = colour2)
 
-            document.querySelectorAll('.paramLink').forEach(el => el.onclick = () => window.location.href = `https://simonkamon11.github.io/monkadex/${el.textContent}/?theme=${params.get('theme')}`)
-            document.getElementById('logo-container').onclick = () => window.location.href = `https://simonkamon11.github.io/monkadex/?theme=${params.get('theme')}`
+            document.querySelectorAll('.paramLink').forEach(el => el.onclick = () => window.location.href = `/monkadex/${el.textContent}/?theme=${params.get('theme')}`)
+            document.getElementById('logo-container').onclick = () => window.location.href = `/monkadex/?theme=${params.get('theme')}`
         </script>
     </div>
 
