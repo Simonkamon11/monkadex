@@ -1,4 +1,4 @@
-import { setupLocations, setupShinytools, setupMoves, setupAbout, setupSitemap, setupIndex } from './javascript/set_up.js';
+import { setupLocations, setupShinytools, setupMoves, setupAbout, setupSitemap, setup404, setupIndex } from './javascript/set_up.js';
 import { fetchPokemonData, fetchLocationData, fetchAreaData, fetchRegionData, fetchShinyData, fetchGameData, fetchMoveData, fetchGamesData, fetchLocateData } from './javascript/fetch.js';
 import { encounterCounter } from './javascript/misc.js';
 import { switchTheme } from './javascript/misc.js';
@@ -27,6 +27,9 @@ else if (window.location.pathname.endsWith("/about/") || window.location.pathnam
 }
 else if (window.location.pathname.endsWith("/sitemap.html")) {
     setupSitemap();
+}
+else if (window.location.pathname.endsWith("/404.html")) {
+    setup404();
 }
 else { // this will always be the index page
     setupIndex();

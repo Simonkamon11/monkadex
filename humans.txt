@@ -1,0 +1,13 @@
+Monkadex
+
+Developer:
+Simon Aarseth
+
+Website:
+https://simonkamon11.github.io/monkadex/
+
+Made with:
+HTML
+CSS
+JavaScript
+Love

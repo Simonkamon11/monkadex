@@ -258,3 +258,40 @@ export function setupSitemap() {
     const border = document.getElementById('header-border');
     border.style['background-color'] = colour2;
 }
+
+export function setup404() {
+    const params = new URLSearchParams(window.location.search);
+
+    globalThis.themeParam = params.get('theme');
+
+    let colour1, colour2;
+    if(themeParam === 'dark' || storedTheme === 'dark') {
+        colour1 = 'rgb(40, 40, 40)';
+        colour2 = 'rgb(170, 170, 170)';
+    }
+    else if(themeParam === 'light' || storedTheme === 'light') {
+        colour1 = 'rgb(255, 255, 255)';
+        colour2 = 'rgb(0, 0, 0)';
+    }
+    else {
+        if(themeParam) {
+            const newUrl = window.location.pathname;
+            window.history.pushState({}, "", newUrl);
+        }
+        if(window.matchMedia("(prefers-color-scheme: dark)").matches) {
+            colour1 = 'rgb(40, 40, 40)';
+            colour2 = 'rgb(170, 170, 170)';
+        }
+        else {
+            colour1 = 'rgb(255, 255, 255)';
+            colour2 = 'rgb(0, 0, 0)';
+        }
+    }
+
+    const sitemapBody = document.getElementById('404-body');
+    sitemapBody.style['background-color'] = colour1;
+    sitemapBody.style['color'] = colour2;
+
+    const border = document.getElementById('header-border');
+    border.style['background-color'] = colour2;
+}
