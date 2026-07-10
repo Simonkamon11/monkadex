@@ -100,7 +100,7 @@ export async function fetchPokemonData() {
         imgShiny.title = `${name} shiny sprite`;
         document.getElementById('shiny-sparkles').style.display = 'block';
 
-        document.getElementById('shinyImage-container').onclick = () => window.location.href = `https://simonkamon11.github.io/monkadex/shinytools/?pokemon=${pokemonName}&theme=${params.get('theme')}&count=0`;
+        document.getElementById('shinyImage-container').onclick = () => window.location.href = `/monkadex/shinytools/?pokemon=${pokemonName}&theme=${params.get('theme')}&count=0`;
 
         let pokedexNr;
         for (const item of speciesData.pokedex_numbers) {
@@ -763,7 +763,7 @@ export async function fetchPokemonData() {
                         newH2 = document.createElement('h2');
                         newH2.classList.add('text', 'clickable', 'movesGamesContent', 'gameMoveText');
                         newH2.textContent = `${item.move.name}: learned by ${detail.move_learn_method.name} from level ${detail.level_learned_at}.`;
-                        newH2.onclick = () => window.location.href = `https://simonkamon11.github.io/monkadex/moves/?move=${item.move.name}&theme=${params.get('theme')}`;
+                        newH2.onclick = () => window.location.href = `/monkadex/moves/?move=${item.move.name}&theme=${params.get('theme')}`;
                         gameMovesContainer.appendChild(newH2);
                     }
                 }
@@ -1023,7 +1023,7 @@ export async function fetchAreaData() {
 
             encounterNameHTML.classList.add('locationsContent', 'text', 'pokemonName', 'clickable')
             encounterNameHTML.textContent = encounterName.charAt(0).toUpperCase() + encounterName.substring(1);
-            encounterNameHTML.setAttribute('onclick', `window.location.href = 'https://simonkamon11.github.io/monkadex/?pokemon=${encounterName}'`);
+            encounterNameHTML.setAttribute('onclick', `window.location.href = '/monkadex/?pokemon=${encounterName}'`);
             encounterNameTypeDiv.appendChild(encounterNameHTML);
 
             encounterType1HTML.classList.add('locationsContent');
@@ -1705,7 +1705,7 @@ export async function fetchShinyData() {
 
         const pokemonNameHTML = document.getElementById('pokemonName');
         pokemonNameHTML.textContent = name;
-        pokemonNameHTML.setAttribute('onclick', `window.location.href = 'https://simonkamon11.github.io/monkadex/?pokemon=${pokemonName}&theme=${params.get('theme')}'`);
+        pokemonNameHTML.setAttribute('onclick', `window.location.href = '/monkadex/?pokemon=${pokemonName}&theme=${params.get('theme')}'`);
 
         const type1Img = document.getElementById('type1');
         const type1 = data.types[0].type.name.charAt(0).toUpperCase() + data.types[0].type.name.substring(1);
@@ -2015,7 +2015,7 @@ export async function fetchConstructionData() {
 
     constructionNameHTML.textContent = constructionName.charAt(0).toUpperCase() + constructionName.substring(1);
     constructionNameHTML.style.display = 'block';
-    constructionNameHTML.setAttribute('onclick', `window.location.href = 'https://simonkamon11.github.io/monkadex/?pokemon=${constructionName}&theme=${params.get('theme')}'`);
+    constructionNameHTML.setAttribute('onclick', `window.location.href = '/monkadex/?pokemon=${constructionName}&theme=${params.get('theme')}'`);
 
     const constructionType1 = constructionData.types[0].type.name.charAt(0).toUpperCase() + constructionData.types[0].type.name.substring(1);
     constructionType1HTML.src = `../images/pokemon_types/Type_${constructionType1}_HOME.webp`;

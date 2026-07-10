@@ -180,7 +180,7 @@ export async function areaClicked(area) {
 
             encounterNameHTML.classList.add('locationsContent', 'text', 'pokemonName', 'clickable')
             encounterNameHTML.textContent = encounterName.charAt(0).toUpperCase() + encounterName.substring(1);
-            encounterNameHTML.setAttribute('onclick', `window.location.href = 'https://simonkamon11.github.io/monkadex/?pokemon=${encounterName}&theme=${params.get('theme')}'`);
+            encounterNameHTML.setAttribute('onclick', `window.location.href = '/monkadex/?pokemon=${encounterName}&theme=${params.get('theme')}'`);
             encounterNameTypeDiv.appendChild(encounterNameHTML);
 
             encounterType1HTML.classList.add('locationsContent');
