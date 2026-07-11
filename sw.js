@@ -1,4 +1,4 @@
-const CACHE_NAME = "monkadex-v1";
+const CACHE_NAME = "monkadex-v2";
 
 const STATIC_FILES = [
     "/monkadex/",
