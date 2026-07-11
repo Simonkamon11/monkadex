@@ -25,7 +25,7 @@ else if(window.location.pathname.endsWith("/locations/") || window.location.path
 else if(window.location.pathname.endsWith("/moves/") || window.location.pathname.endsWith("/moves/index.html")) {
     setupMoves();
 }
-else if(window.location.pathname.endsWith("/about/") || window.location.pathname.endsWith("/about/index.html") || window.location.pathname.endsWith("/sitemap.html") || window.location.pathname.endsWith("/security-policy.html") || window.location.pathname.endsWith("/privacy-policy.html") || window.location.pathname.endsWith("/offline.html")) {
+else if(window.location.pathname.endsWith("/about/") || window.location.pathname.endsWith("/about/index.html") || window.location.pathname.endsWith("/sitemap.html") || window.location.pathname.endsWith("/security-policy.html") || window.location.pathname.endsWith("/privacy-policy.html") || window.location.pathname.endsWith("/offline.html") || window.location.pathname.endsWith("/thanks.html")) {
     setupOther();
 }
 else {
