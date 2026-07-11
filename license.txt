@@ -1,0 +1,7 @@
+Copyright © 2026 Simon Aarseth
+
+All rights reserved.
+
+This website and its source code, including but not limited to the HTML, CSS, JavaScript, images, graphics, and written content, are the intellectual property of the copyright holder.
+
+No part of this project may be copied, reproduced, modified, distributed, published, or used in any form without prior written permission from the copyright holder.

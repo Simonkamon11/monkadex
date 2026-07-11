@@ -185,44 +185,7 @@ export function setupMoves() {
     fetchConstructionData();
 }
 
-export function setupAbout() {
-    const params = new URLSearchParams(window.location.search);
-
-    globalThis.themeParam = params.get('theme');
-
-    let colour1, colour2;
-    if(themeParam === 'dark' || storedTheme === 'dark') {
-        colour1 = 'rgb(40, 40, 40)';
-        colour2 = 'rgb(170, 170, 170)';
-    }
-    else if(themeParam === 'light' || storedTheme === 'light') {
-        colour1 = 'rgb(255, 255, 255)';
-        colour2 = 'rgb(0, 0, 0)';
-    }
-    else {
-        if(params.get('theme')) {
-            const newUrl = window.location.pathname;
-            window.history.pushState({}, "", newUrl);
-        }
-        if(window.matchMedia("(prefers-color-scheme: dark)").matches) {
-            colour1 = 'rgb(40, 40, 40)';
-            colour2 = 'rgb(170, 170, 170)';
-        }
-        else {
-            colour1 = 'rgb(255, 255, 255)';
-            colour2 = 'rgb(0, 0, 0)';
-        }
-    }
-
-    const aboutBody = document.getElementById('about-body');
-    aboutBody.style['background-color'] = colour1;
-    aboutBody.style['color'] = colour2;
-
-    const border = document.getElementById('header-border');
-    border.style['background-color'] = colour2;
-}
-
-export function setupSitemap() {
+export function setupOther() {
     const params = new URLSearchParams(window.location.search);
 
     globalThis.themeParam = params.get('theme');
@@ -251,9 +214,9 @@ export function setupSitemap() {
         }
     }
 
-    const sitemapBody = document.getElementById('sitemap-body');
-    sitemapBody.style['background-color'] = colour1;
-    sitemapBody.style['color'] = colour2;
+    const body = document.getElementById('body');
+    body.style['background-color'] = colour1;
+    body.style['color'] = colour2;
 
     const border = document.getElementById('header-border');
     border.style['background-color'] = colour2;
@@ -288,9 +251,9 @@ export function setup404() {
         }
     }
 
-    const sitemapBody = document.getElementById('404-body');
-    sitemapBody.style['background-color'] = colour1;
-    sitemapBody.style['color'] = colour2;
+    const body = document.getElementById('404-body');
+    body.style['background-color'] = colour1;
+    body.style['color'] = colour2;
 
     const border = document.getElementById('header-border');
     border.style['background-color'] = colour2;
