@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404</title>
+
+    <meta name="author" content="Simon Aarseth">
+
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <link href="https://fonts.googleapis.com/css2?family=Bitcount+Single:wght@100..900&family=Press+Start+2P&display=swap" rel="stylesheet">
+</head>
+<body id="body">
+    <div id="header">
+        <div id="logo-container" class="clickable" onclick="window.location.href = '/monkadex/';">
+            <img src="favicon.ico" id="logo-img">
+            <h1 class="header-text" id="logo-text">Monkadex</h1>
+        </div>
+        <div id="header-pages-menu">
+            <div class="clickable" id="header-pages-text-container" onclick="
+            switch(document.getElementById('header-pages-dropdown-menu').style.display) {
+                case('none'): document.getElementById('header-pages-dropdown-menu').style.display = 'block'; break;
+                default: document.getElementById('header-pages-dropdown-menu').style.display = 'none'; break;
+            }">
+                <h2 id="header-pages-text">Other pages</h2>
+                <img src="" id="dropdown-arrow">
+            </div>
+            <div id="header-pages-dropdown-menu">
+                <h2 class="pageLink clickable"  onclick="window.location.href = '/monkadex/locations/'">locations</h2>
+                <h2 class="pageLink clickable"  onclick="window.location.href = '/monkadex/shinytools/'">shinytools</h2>
+                <h2 class="pageLink clickable" onclick="window.location.href = '/monkadex/moves/'">moves</h2>
+                <h2 class="pageLink clickable" onclick="window.location.href = '/monkadex/about/'">about</h2>
+                <h2 class="pageLink clickable" onclick="window.location.href = '/monkadex/sitemap.html'">sitemap</h2>
+            </div>
+        </div>
+        <script>
+            black = 'rgb(0, 0, 0)';
+            white = 'rgb(255, 255, 255)';
+            if(window.matchMedia("(prefers-color-scheme: dark)").matches) {
+                colour1 = black
+                colour2 = white
+                document.getElementById('dropdown-arrow').src = 'images/arrow_white.png'
+            }
+            else {
+                colour1 = white
+                colour2 = black
+                document.getElementById('dropdown-arrow').src = 'images/arrow_black.png'
+            }
+            document.getElementById('header').style['background-color'] = colour1
+            document.getElementById('logo-text').style['color'] = colour2
+            document.getElementById('header-pages-dropdown-menu').style['background-color'] = colour1
+            document.getElementById('header-pages-text').style['color'] = colour2
+            document.querySelectorAll('.pageLink').forEach(el => el.style['color'] = colour2)
+        </script>
+    </div>
+
+    <div id="header-border"></div>
+
+    <h1 id="title" class="text">Offline</h1>
+    <h2 id="owner" class="text">Monkadex by Simonkamon11</h2>
+
+    <h2 class="text">You are currenlty offline.</h2>
+    <h2 class="text">Previously searched data may still appear.</h2>
+
+    <script type="module" src="script.js"></script>
+</body>
+</html>

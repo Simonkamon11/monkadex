@@ -8,6 +8,12 @@ Monkadex is a website created by Simon Aarseth (Simonkamon11) as a tool for all 
 - Move searcher (under construction)
 - Shiny tools
 
+## Browser Search
+
+Monkadex supports OpenSearch.
+
+Add Monkadex as a browser search engine, then search Pokémon directly from your address bar.
+
 ## Live Website
 https://simonkamon11.github.io/monkadex/
 
