@@ -12,13 +12,14 @@
     <meta property="og:title" content="Monkadex">
     <meta property="og:description" content="Monkadex: Pokédex by Simonkamon11">
     <meta property="og:type" content="website">
-    <meta property="og:image" content="https://simonkamon11.github.io/monkadex/images/pokeballs/pokeball_pokedex.png">
-    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <meta property="og:image" content="https://simonkamon11.github.io/monkadex/images/opengraph/opengraph-index.png">
 
     <meta name="google-site-verification" content="Op-umb3OSG__1x3ZN32ioLroTl8Cs2zviCj1dNvSYbU" />
 
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Bitcount+Single:wght@100..900&family=Press+Start+2P&display=swap" rel="stylesheet">
+    <link rel="apple-touch-icon" href="images/icon-192.png">
+    <link rel="manifest" href="manifest.json">
 </head>
 <body id="index-body">
     <div id="header">
@@ -103,7 +104,10 @@
         </div>
     </div>
 
-    <h1 id="title" class="text">Monkadex</h1>
+    <div id="title-container">
+        <img src="images/pokeballs/pokeball_pokedex.png" id="title-img">
+        <h1 id="title" class="text">Monkadex</h1>
+    </div>
     <h2 id="owner" class="text">Pokédex by Simonkamon11</h2>
     <input type="text" class="textInput"  id="pokemonInput" placeholder="Enter Pokémon name">
     <button onclick="fetchPokemonData()" class="button clickable" id="fetch-button">Fetch data</button><br>

@@ -9,6 +9,11 @@
     <meta name="keywords" content="moves, pokémon, pokédex">
     <meta name="author" content="Simon Aarseth">
 
+    <meta property="og:title" content="Monkadex: Moves">
+    <meta property="og:description" content="Moves: Monkadex by Simonkamon11">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="https://simonkamon11.github.io/monkadex/images/opengraph/opengraph-moves.png">
+
     <link rel="stylesheet" href="../style.css">
     <link rel="icon" href="../favicon.ico" type="image/x-icon">
     <link href="https://fonts.googleapis.com/css2?family=Bitcount+Single:wght@100..900&family=Press+Start+2P&display=swap" rel="stylesheet">
@@ -96,7 +101,10 @@
         </div>
     </div>
 
-    <h1 id="title" class="text">Pokémon moves</h1>
+    <div id="title-container">
+        <img src="../images/pokeballs/pokeball_repeat.png" id="title-img">
+        <h1 id="title" class="text">Moves</h1>
+    </div>
     <h2 id="owner" class="text">Monkadex by Simonkamon11</h2>
     <input type="text" class="textInput"  id="moveInput" placeholder="Enter Move name">
     <button onclick="fetchMoveData()" class="button clickable fetch-button">Fetch data</button><br>
