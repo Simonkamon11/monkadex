@@ -1,6 +1,6 @@
 # Monkadex
 
-Monkadex is a website created by Simon Aarseth (Simonkamon11) as a toll for all things Pokémon, the main page being a common Pokédex. 
+Monkadex is a website created by Simon Aarseth (Simonkamon11) as a tool for all things Pokémon, the main page being a common Pokédex. 
 
 ## Features
 - Pokédex

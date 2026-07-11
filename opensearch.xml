@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<OpenSearchDescription xmlns="http://a9.com/-/spec/opensearch/1.1/">
+
+    <ShortName>Monkadex</ShortName>
+
+    <Description>Search for Pokémon on Monkadex</Description>
+
+    <Image height="32" width="32" type="image/png">https://simonkamon11.github.io/monkadex/images/pokeballs/pokeball_pokedex.png</Image>
+
+    <InputEncoding>UTF-8</InputEncoding>
+
+    <Url type="text/html" method="get" template="https://simonkamon11.github.io/monkadex/?pokemon={searchTerms}"/>
+
+</OpenSearchDescription>
