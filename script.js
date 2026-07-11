@@ -13,19 +13,21 @@ window.fetchMoveData = fetchMoveData;
 window.fetchGamesData = fetchGamesData;
 window.fetchLocateData = fetchLocateData;
 
-if(window.location.pathname.endsWith("/monkadex/") || window.location.pathname.endsWith("/monkadex/index.html")) {
+const page = document.body.dataset.page;
+
+if(page === "index") {
     setupIndex();
 }
-else if(window.location.pathname.endsWith("/shinytools/") || window.location.pathname.endsWith("/shinytools/index.html")) {
+else if(page === "shinytools") {
     setupShinytools();
 }
-else if(window.location.pathname.endsWith("/locations/") || window.location.pathname.endsWith("/locations/index.html")) {
+else if(page === "locations") {
     setupLocations();
 }
-else if(window.location.pathname.endsWith("/moves/") || window.location.pathname.endsWith("/moves/index.html")) {
+else if(page === "moves") {
     setupMoves();
 }
-else if(window.location.pathname.endsWith("/about/") || window.location.pathname.endsWith("/about/index.html") || window.location.pathname.endsWith("/sitemap.html") || window.location.pathname.endsWith("/security-policy.html") || window.location.pathname.endsWith("/privacy-policy.html") || window.location.pathname.endsWith("/offline.html") || window.location.pathname.endsWith("/thanks.html")) {
+else if(page === "about" || page === "sitemap" || page === "security" || page === "privacy" || page === "offline" || page === "thanks") {
     setupOther();
 }
 else {
