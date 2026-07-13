@@ -1,4 +1,4 @@
-const CACHE_NAME = "monkadex-v3";
+const CACHE_NAME = "monkadex-v4";
 const POKEMON_CACHE = "pokemon-cache";
 
 const STATIC_FILES = [
