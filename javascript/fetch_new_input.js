@@ -1,4 +1,4 @@
-import { fetchPokemonData, fetchLocationData, fetchAreaData, fetchRegionData, fetchShinyData, fetchGameData, fetchMoveData } from './fetch.js'
+import { fetchPokemonData, fetchLocationData, fetchAreaData, fetchRegionData, fetchGamesData, fetchLocateData, fetchShinyData, fetchGameData, fetchMoveData } from './fetch.js'
 
 export async function fetchNewInput(text) {
     document.getElementById('pokemonInput').value = text;

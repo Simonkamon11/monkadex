@@ -1,5 +1,5 @@
 import { get3ClosestNames, getGamesList } from './names_list.js';
-import { fetchNewInput, fetchNewLocationInput, fetchNewAreaInput, fetchNewRegionInput, fetchNewShinyInput, fetchNewGameInput, fetchNewMoveInput, fetchNewGamesInput, fetchNewLocateInput } from './fetch_new_input.js';
+import { fetchNewInput, fetchNewLocationInput, fetchNewAreaInput, fetchNewRegionInput, fetchNewGamesInput, fetchNewLocateInput, fetchNewShinyInput, fetchNewGameInput, fetchNewMoveInput, fetchNewGamesInput, fetchNewLocateInput } from './fetch_new_input.js';
 import { regionClicked, locationClicked, areaClicked } from './fetch_clicked.js';
 import { getPokemonList } from './names_list.js';
 import { switchTheme } from './misc.js';
@@ -9,6 +9,8 @@ window.fetchNewInput = fetchNewInput;
 window.fetchNewLocationInput = fetchNewLocationInput;
 window.fetchNewAreaInput = fetchNewAreaInput;
 window.fetchNewRegionInput = fetchNewRegionInput;
+window.fetchNewGamesInput = fetchNewGamesInput;
+window.fetchNewLocateInput = fetchNewLocateInput;
 window.fetchNewShinyInput = fetchNewShinyInput;
 window.fetchNewGameInput = fetchNewGameInput;
 window.fetchNewMoveInput = fetchNewMoveInput;
