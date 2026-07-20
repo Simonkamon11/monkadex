@@ -38,10 +38,10 @@ if("serviceWorker" in navigator) {
     window.addEventListener("load", () => {
         navigator.serviceWorker.register("/monkadex/sw.js")
             .then(() => {
-                console.log("Service worker registered");
+                console.log("Service Worker: Registered");
             })
             .catch(error => {
-                console.log("Service worker failed:", error);
+                console.log("Service Worker: Error:", error);
             });
     });
 }

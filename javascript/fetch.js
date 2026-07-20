@@ -1,7 +1,6 @@
-import { get3ClosestNames, getGamesList } from './names_list.js';
+import { get3ClosestNames, getGamesList, getPokemonList } from './names_list.js';
 import { fetchNewInput, fetchNewLocationInput, fetchNewAreaInput, fetchNewRegionInput, fetchNewShinyInput, fetchNewGameInput, fetchNewMoveInput, fetchNewGamesInput, fetchNewLocateInput } from './fetch_new_input.js';
 import { regionClicked, locationClicked, areaClicked } from './fetch_clicked.js';
-import { getPokemonList } from './names_list.js';
 import { switchTheme } from './misc.js';
 import { state } from './state.js';
 
