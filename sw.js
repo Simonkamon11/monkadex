@@ -11,7 +11,6 @@ const OFFLINE_ASSETS = [
     "/monkadex/javascript/fetch_new_input.js",
     "/monkadex/javascript/state.js",
     "/monkadex/javascript/names_list.js",
-    "/monkadex/javascript/fetch_new_input.js",
     "/monkadex/javascript/fetch_clicked.js",
     "/monkadex/favicon.ico",
     "/monkadex/images/arrow_black.png",
