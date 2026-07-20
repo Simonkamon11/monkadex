@@ -36,7 +36,7 @@ else {
 
 if("serviceWorker" in navigator) {
     window.addEventListener("load", () => {
-        navigator.serviceWorker.register("/monkadex/sw.js")
+        navigator.serviceWorker.register("../sw.js")
             .then(() => {
                 console.log("Service worker registered");
             })
