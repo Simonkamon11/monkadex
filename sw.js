@@ -1,4 +1,4 @@
-const CACHE_NAME = 'monkadex-v5';
+const CACHE_NAME = 'monkadex-v6';
 const POKEMON_CACHE = "PokeAPI_cache.1";
 
 const CACHE_ASSETS = [

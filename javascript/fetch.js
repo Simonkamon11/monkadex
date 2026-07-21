@@ -24,30 +24,43 @@ export async function fetchPokemonData() {
 
     document.getElementById('fetchText').textContent = 'Fetching data...';
     try {
-        const pokemonName = document.getElementById('pokemonInput').value.toLowerCase().replaceAll(" ", "-");
+        let pokemonName = document.getElementById('pokemonInput').value.toLowerCase().replaceAll(" ", "-");
 
-        params.set('pokemon', pokemonName);
-        const newUrl = `${window.location.pathname}?${params.toString()}`;
-        window.history.pushState({}, "", newUrl);
+        let response = await fetch(`https://pokeapi.co/api/v2/pokemon/${pokemonName}`);
 
-        const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${pokemonName}`);
+        let speciesData = null;
+        if(response.status === 404) {
+            const speciesResponse = await fetch(`https://pokeapi.co/api/v2/pokemon-species/${pokemonName}`);
+            if(speciesResponse.status === 404) {
+                throw new Error('Pokémon not found');
+            }
+            if(!speciesResponse.ok) {
+                throw new Error('Could not fetch data');
+            }
+            speciesData = await speciesResponse.json();
 
-        if (response.status === 404) {
-            throw new Error('Pokémon not found');
+            pokemonName = speciesData.varieties[0].pokemon.name;
+            response = await fetch(speciesData.varieties[0].pokemon.url);
         }
-        if (!response.ok) {
+        if(!response.ok) {
             throw new Error('Could not fetch data');
         }
 
         const data = await response.json();
 
-        const speciesResponse = await fetch(data.species.url);
-        if (!speciesResponse.ok) {
-            throw new Error('Could not fetch species data');
-        }
-        document.getElementById('fetchText').textContent = 'Data fetched successfully';
+        params.set('pokemon', pokemonName);
+        const newUrl = `${window.location.pathname}?${params.toString()}`;
+        window.history.pushState({}, "", newUrl);
 
-        const speciesData = await speciesResponse.json();
+        if(speciesData !== null) {
+            const speciesResponse = await fetch(data.species.url);
+            if(!speciesResponse.ok) {
+                throw new Error('Could not fetch species data');
+            }
+            document.getElementById('fetchText').textContent = 'Data fetched successfully';
+
+            speciesData = await speciesResponse.json();
+        }
 
         const speciesName = speciesData.name;
 
@@ -1417,6 +1430,28 @@ export async function fetchLocateData() {
     try {
         const pokemonName = document.getElementById('pokemonInput').value.toLowerCase().replaceAll(" ", "-");
 
+        const newUrl = `${window.location.pathname}?${params.toString()}`;
+        window.history.pushState({}, "", newUrl);
+
+        let pokemonResponse = await fetch(`https://pokeapi.co/api/v2/pokemon/${pokemonName}`);
+        if(pokemonResponse.status === 404) {
+            const speciesResponse = await fetch(`https://pokeapi.co/api/v2/pokemon-species/${pokemonName}`);
+            if(speciesResponse.status === 404) {
+                throw new Error('Pokémon not found');
+            }
+            if(!speciesResponse.ok) {
+                throw new Error('Could not pokémon fetch data');
+            }
+            const speciesData = await speciesResponse.json();
+
+            pokemonName = speciesData.varieties[0].pokemon.name;
+            pokemonResponse = await fetch(speciesData.varieties[0].pokemon.url);
+        }
+        if(!pokemonResponse.ok) {
+            throw new Error("Could not fetch pokémon data");
+        }
+        const pokemonData = await pokemonResponse.json();
+
         params.set('pokemon', pokemonName)
         if(regionParam) {
             params.delete('region');
@@ -1430,17 +1465,6 @@ export async function fetchLocateData() {
         if(pokemonParam) {
             params.delete('game');
         }
-        const newUrl = `${window.location.pathname}?${params.toString()}`;
-        window.history.pushState({}, "", newUrl);
-
-        const pokemonResponse = await fetch(`https://pokeapi.co/api/v2/pokemon/${pokemonName}`);
-        if(pokemonResponse.status === 404) {
-            throw new Error('Pokémon not found');
-        }
-        if(!pokemonResponse.ok) {
-            throw new Error("Could not fetch pokémon data");
-        }
-        const pokemonData = await pokemonResponse.json();
 
         const encountersResponse = await fetch(pokemonData.location_area_encounters);
         if(!encountersResponse.ok) {
