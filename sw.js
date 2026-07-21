@@ -16,15 +16,14 @@ const CACHE_ASSETS = [
     "/monkadex/javascript/fetch_clicked.js",
     "/monkadex/favicon.ico",
     "/monkadex/images/arrow_black.png",
-    "/monkadex/images/arrow_white.png",
-    "/monkadex/images/pokeballs/pokeball_pokedex.png",
-    "/monkadex/images/pokeballs/pokeball_dark.png",
-    "/monkadex/images/pokeballs/pokeball_light.png",
-    "/monkadex/images/pokeballs/pokeball_black.png",
-    "/monkadex/images/pokeballs/pokeball_ultraball.png",
-    "/monkadex/images/pokeballs/pokeball_premier.png",
-    "/monkadex/images/pokeballs/pokeball_gameboy.png"
+    "/monkadex/images/arrow_white.png"
 ];
+for(const item of ["pokedex", "dark", "light", "black", "ultraball", "premier", "gameboy"]) {
+    CACHE_ASSETS.push(`/monkadex/images/pokeballs/pokeball_${item}`);
+}
+for(const item of ["Bug", "Dark", "Dragon", "Electric", "Fairy", "Fighting", "Fire", "Flying", "Ghost", "Grass", "Ground", "Ice", "Normal", "Poison", "Psychic", "Rock", "Steel", "Water"]) {
+    CACHE_ASSETS.push(`/monkadex/images/pokemon_types/Type_${item}_HOME.webp`);
+}
 
 self.addEventListener('install', event => {
     event.waitUntil(
