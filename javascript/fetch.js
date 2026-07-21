@@ -52,7 +52,7 @@ export async function fetchPokemonData() {
         const newUrl = `${window.location.pathname}?${params.toString()}`;
         window.history.pushState({}, "", newUrl);
 
-        if(speciesData !== null) {
+        if(speciesData === null) {
             const speciesResponse = await fetch(data.species.url);
             if(!speciesResponse.ok) {
                 throw new Error('Could not fetch species data');
@@ -303,7 +303,7 @@ export async function fetchPokemonData() {
                 nextEvosText.style.display = 'block';
 
                 let nextEvoNameTypeDiv, nextEvoNameHTML, nextEvoType1HTML, nextEvoType2HTML, nextEvoSpeciesHTML, nextEvoImg, nextEvoPokedexNrHTML;
-                let nextEvoName, closestName, bestScore, currentScore, nextEvoResponse, nextEvoData, nextEvoType1, nextEvoType2, nextEvoSpeciesResponse, nextEvoSpeciesData, nextEvoSpecies, nextEvoPokedexNr;
+                let nextEvoName, nextEvoResponse, nextEvoData, nextEvoType1, nextEvoType2, nextEvoSpeciesResponse, nextEvoSpeciesData, nextEvoSpecies, nextEvoPokedexNr;
                 for (let i = 0; i < evolutionData.chain.evolves_to.length; i++) {
                     nextEvoNameTypeDiv = document.createElement('div');
                     nextEvoNameHTML = document.createElement('h2');
@@ -315,32 +315,24 @@ export async function fetchPokemonData() {
 
                     nextEvoName = evolutionData.chain.evolves_to[i].species.name;
 
-                    try {
-                        nextEvoResponse = await fetch(`https://pokeapi.co/api/v2/pokemon/${nextEvoName}`);
-                        if (!nextEvoResponse.ok) {
-                            throw new Error('Could not fetch previous-evolution data');
+                    nextEvoSpeciesData = null;
+                    nextEvoResponse = await fetch(`https://pokeapi.co/api/v2/pokemon/${nextEvoName}`);
+                    if(nextEvoResponse.status === 404) {
+                        nextEvoSpeciesResponse = await fetch(`https://pokeapi.co/api/v2/pokemon-species/${nextEvoName}`);
+                        if(!nextEvoSpeciesResponse.ok) {
+                            throw new Error('Could not fetch next-evolution data');
                         }
-                        nextEvoData = await nextEvoResponse.json();
-                    }
-                    catch(error) {
-                        let bestScore = 0
-                        let currentScore, closestName;
-                        for(const item of pokemonList) {
-                            if(!item.includes('-mega') && !item.includes('-gmax')) {
-                                currentScore = similarityScore(item, nextEvoName);
-                                if(currentScore > bestScore) {
-                                    closestName = item;
-                                }
-                            }
-                        }
-                        nextEvoName = closestName;
+                        nextEvoSpeciesData = await nextEvoSpeciesResponse.json();
+
+                        nextEvoName = nextEvoSpeciesData.varieties[0].pokemon.name;
+                        nextEvoResponse = await fetch(nextEvoSpeciesData.varieties[0].pokemon.url);
                     
                         nextEvoResponse = await fetch(`https://pokeapi.co/api/v2/pokemon/${nextEvoName}`);
-                        if (!nextEvoResponse.ok) {
-                            throw new Error('Could not fetch previous-evolution data');
-                        }
-                        nextEvoData = await nextEvoResponse.json();
                     }
+                    if (!nextEvoResponse.ok) {
+                        throw new Error('Could not fetch next-evolution data');
+                    }
+                    nextEvoData = await nextEvoResponse.json();
 
                     nextEvoNameTypeDiv.classList.add('nextEvosContent', 'name-type-container');
                     nextEvosContainer.appendChild(nextEvoNameTypeDiv);
@@ -364,11 +356,13 @@ export async function fetchPokemonData() {
                         nextEvoNameTypeDiv.appendChild(nextEvoType2HTML);
                     }
 
-                    nextEvoSpeciesResponse = await fetch(nextEvoData.species.url);
-                    if (!nextEvoSpeciesResponse.ok) {
-                        throw new Error('Could not fetch next-evolution species data');
+                    if(nextEvoSpeciesData === null) {
+                        nextEvoSpeciesResponse = await fetch(nextEvoData.species.url);
+                        if (!nextEvoSpeciesResponse.ok) {
+                            throw new Error('Could not fetch next-evolution species data');
+                        }
+                        nextEvoSpeciesData = await nextEvoSpeciesResponse.json();
                     }
-                    nextEvoSpeciesData = await nextEvoSpeciesResponse.json();
 
                     for (const item of nextEvoSpeciesData.genera) {
                         if (item.language.name === 'en') {
@@ -402,33 +396,25 @@ export async function fetchPokemonData() {
                     if (evolutionData.chain.evolves_to[i].species.name === speciesName) {
                         let preEvoName = evolutionData.chain.species.name;
 
-                        let preEvoData;
-                        try {
-                            const preEvoResponse = await fetch(`https://pokeapi.co/api/v2/pokemon/${preEvoName}`);
-                            if (!preEvoResponse.ok) {
+                        let preEvoSpeciesData = null;
+                        let preEvoSpeciesResponse;
+                        let preEvoResponse = await fetch(`https://pokeapi.co/api/v2/pokemon/${preEvoName}`);
+                        if(preEvoResponse.status === 404) {
+                            preEvoSpeciesResponse = await fetch(`https://pokeapi.co/api/v2/pokemon-species/${preEvoName}`);
+                            if(!preEvoSpeciesResponse.ok) {
                                 throw new Error('Could not fetch previous-evolution data');
                             }
-                            preEvoData = await preEvoResponse.json();
-                        }
-                        catch(error) {
-                            let bestScore = 0
-                            let currentScore, closestName;
-                            for(const item of pokemonList) {
-                                if(!item.includes('-mega') && !item.includes('-gmax')) {
-                                    currentScore = similarityScore(item, preEvoName);
-                                    if(currentScore > bestScore) {
-                                        closestName = item;
-                                    }
-                                }
-                            }
-                            preEvoName = closestName;
+                            preEvoSpeciesData = await preEvoSpeciesResponse.json();
+
+                            preEvoName = preEvoSpeciesData.varieties[0].pokemon.name;
+                            preEvoResponse = await fetch(preEvoSpeciesData.varieties[0].pokemon.url);
                         
-                            const preEvoResponse = await fetch(`https://pokeapi.co/api/v2/pokemon/${preEvoName}`);
-                            if (!preEvoResponse.ok) {
-                                throw new Error('Could not fetch previous-evolution data');
-                            }
-                            preEvoData = await preEvoResponse.json();
+                            preEvoResponse = await fetch(`https://pokeapi.co/api/v2/pokemon/${preEvoName}`);
                         }
+                        if (!preEvoResponse.ok) {
+                            throw new Error('Could not fetch previous-evolution data');
+                        }
+                        const preEvoData = await preEvoResponse.json();
 
                         preEvoText.style.display = 'block';
 
@@ -452,11 +438,13 @@ export async function fetchPokemonData() {
                             preEvoType2HTML.style.display = 'none';
                         }
 
-                        const preEvoSpeciesResponse = await fetch(preEvoData.species.url);
-                        if (!preEvoSpeciesResponse.ok) {
-                            throw new Error('Could not fetch previous-evolution species data');
+                        if(preEvoSpeciesData === null) {
+                            preEvoSpeciesResponse = await fetch(preEvoData.species.url);
+                            if (!preEvoSpeciesResponse.ok) {
+                                throw new Error('Could not fetch previous-evolution species data');
+                            }
+                            preEvoSpeciesData = await preEvoSpeciesResponse.json();
                         }
-                        const preEvoSpeciesData = await preEvoSpeciesResponse.json();
 
                         let preEvoSpecies;
                         for (const item of preEvoSpeciesData.genera) {
@@ -504,32 +492,24 @@ export async function fetchPokemonData() {
 
                                 nextEvoName = evolutionData.chain.evolves_to[i].evolves_to[j].species.name;
 
-                                try {
-                                    nextEvoResponse = await fetch(`https://pokeapi.co/api/v2/pokemon/${nextEvoName}`);
-                                    if (!nextEvoResponse.ok) {
-                                        throw new Error('Could not fetch previous-evolution data');
+                                nextEvoSpeciesData = null;
+                                nextEvoResponse = await fetch(`https://pokeapi.co/api/v2/pokemon/${nextEvoName}`);
+                                if(nextEvoResponse.status === 404) {
+                                    nextEvoSpeciesResponse = await fetch(`https://pokeapi.co/api/v2/pokemon-species/${nextEvoName}`);
+                                    if(!nextEvoSpeciesResponse.ok) {
+                                        throw new Error('Could not fetch next-evolution data');
                                     }
-                                    nextEvoData = await nextEvoResponse.json();
-                                }
-                                catch(error) {
-                                    let bestScore = 0
-                                    let currentScore, closestName;
-                                    for(const item of pokemonList) {
-                                        if(!item.includes('-mega') && !item.includes('-gmax')) {
-                                            currentScore = similarityScore(item, nextEvoName);
-                                            if(currentScore > bestScore) {
-                                                closestName = item;
-                                            }
-                                        }
-                                    }
-                                    nextEvoName = closestName;
+                                    nextEvoSpeciesData = await nextEvoSpeciesResponse.json();
+                                
+                                    nextEvoName = nextEvoSpeciesData.varieties[0].pokemon.name;
+                                    nextEvoResponse = await fetch(nextEvoSpeciesData.varieties[0].pokemon.url);
                                 
                                     nextEvoResponse = await fetch(`https://pokeapi.co/api/v2/pokemon/${nextEvoName}`);
-                                    if (!nextEvoResponse.ok) {
-                                        throw new Error('Could not fetch previous-evolution data');
-                                    }
-                                    const nextEvoData = await nextEvoResponse.json();
                                 }
+                                if (!nextEvoResponse.ok) {
+                                    throw new Error('Could not fetch next-evolution data');
+                                }
+                                nextEvoData = await nextEvoResponse.json();
 
                                 nextEvoNameTypeDiv.classList.add('nextEvosContent', 'name-type-container');
                                 nextEvosContainer.appendChild(nextEvoNameTypeDiv);
@@ -553,11 +533,13 @@ export async function fetchPokemonData() {
                                     nextEvoNameTypeDiv.appendChild(nextEvoType2HTML);
                                 }
 
-                                nextEvoSpeciesResponse = await fetch(nextEvoData.species.url);
-                                if (!nextEvoSpeciesResponse.ok) {
-                                    throw new Error('Could not fetch next-evolution species data');
+                                if(nextEvoSpeciesData === null) {
+                                    nextEvoSpeciesResponse = await fetch(nextEvoData.species.url);
+                                    if (!nextEvoSpeciesResponse.ok) {
+                                        throw new Error('Could not fetch next-evolution species data');
+                                    }
+                                    nextEvoSpeciesData = await nextEvoSpeciesResponse.json();
                                 }
-                                nextEvoSpeciesData = await nextEvoSpeciesResponse.json();
 
                                 for (const item of nextEvoSpeciesData.genera) {
                                     if (item.language.name === 'en') {
@@ -594,33 +576,25 @@ export async function fetchPokemonData() {
                             if (evolutionData.chain.evolves_to[i].evolves_to[j].species.name === speciesName) {
                                 let preEvoName = evolutionData.chain.evolves_to[i].species.name;
 
-                                let preEvoData;
-                                try {
-                                    const preEvoResponse = await fetch(`https://pokeapi.co/api/v2/pokemon/${preEvoName}`);
-                                    if (!preEvoResponse.ok) {
+                                let preEvoSpeciesData = null;
+                                let preEvoSpeciesResponse;
+                                let preEvoResponse = await fetch(`https://pokeapi.co/api/v2/pokemon/${preEvoName}`);
+                                if(preEvoResponse.status === 404) {
+                                    preEvoSpeciesResponse = await fetch(`https://pokeapi.co/api/v2/pokemon-species/${preEvoName}`);
+                                    if(!preEvoSpeciesResponse.ok) {
                                         throw new Error('Could not fetch previous-evolution data');
                                     }
-                                    preEvoData = await preEvoResponse.json();
+                                    preEvoSpeciesData = await preEvoSpeciesResponse.json();
+                                
+                                    preEvoName = preEvoSpeciesData.varieties[0].pokemon.name;
+                                    preEvoResponse = await fetch(preEvoSpeciesData.varieties[0].pokemon.url);
+                                
+                                    preEvoResponse = await fetch(`https://pokeapi.co/api/v2/pokemon/${preEvoName}`);
                                 }
-                                catch(error) {
-                                    let bestScore = 0
-                                    let currentScore, closestName;
-                                    for(const item of pokemonList) {
-                                        if(!item.includes('-mega') && !item.includes('-gmax')) {
-                                            currentScore = similarityScore(item, preEvoName);
-                                            if(currentScore > bestScore) {
-                                                closestName = item;
-                                            }
-                                        }
-                                    }
-                                    preEvoName = closestName;
-
-                                    const preEvoResponse = await fetch(`https://pokeapi.co/api/v2/pokemon/${preEvoName}`);
-                                    if (!preEvoResponse.ok) {
-                                        throw new Error('Could not fetch previous-evolution data');
-                                    }
-                                    preEvoData = await preEvoResponse.json();
+                                if (!preEvoResponse.ok) {
+                                    throw new Error('Could not fetch previous-evolution data');
                                 }
+                                const preEvoData = await preEvoResponse.json();
 
                                 preEvoText.style.display = 'block';
 
@@ -644,11 +618,13 @@ export async function fetchPokemonData() {
                                     preEvoType2HTML.style.display = 'none';
                                 }
 
-                                const preEvoSpeciesResponse = await fetch(preEvoData.species.url);
-                                if (!preEvoSpeciesResponse.ok) {
-                                    throw new Error('Could not fetch previous-evolution species data');
+                                if(preEvoSpeciesData === null) {
+                                    preEvoSpeciesResponse = await fetch(preEvoData.species.url);
+                                    if (!preEvoSpeciesResponse.ok) {
+                                        throw new Error('Could not fetch previous-evolution species data');
+                                    }
+                                    preEvoSpeciesData = await preEvoSpeciesResponse.json();
                                 }
-                                const preEvoSpeciesData = await preEvoSpeciesResponse.json();
 
                                 let preEvoSpecies;
                                 for (const item of preEvoSpeciesData.genera) {
@@ -679,6 +655,78 @@ export async function fetchPokemonData() {
                         }
                     }
                 }
+            }
+        }
+
+        document.querySelectorAll('.variantsContent').forEach(el => el.remove());
+
+        const variantsContainer = document.getElementById('otherVariants-container');
+        if(speciesData.varieties.length > 1) {
+            document.getElementById('otherVariantsText').style.display = 'block';
+        } else {
+            document.getElementById('otherVariantsText').style.display = 'none';
+        }
+
+        let variantNameTypeDiv, variantNameHTML, variantType1HTML, variantType2HTML, variantSpeciesHTML, variantImg, variantPokedexNrHTML;
+        let variantName, variantResponse, variantData, variantType1, variantType2, variantPokedexNr;
+        for(const variant of speciesData.varieties) {
+            variantName = variant.pokemon.name;
+            if(variantName !== pokemonName) {
+                variantNameTypeDiv = document.createElement('div');
+                variantNameHTML = document.createElement('h2');
+                variantType1HTML = document.createElement('img');
+                variantType2HTML = document.createElement('img');
+                variantSpeciesHTML = document.createElement('h2');
+                variantImg = document.createElement('img');
+                variantPokedexNrHTML = document.createElement('h2');
+
+                variantResponse = await fetch(variant.pokemon.url);
+                if (!variantResponse.ok) {
+                    throw new Error('Could not fetch next-evolution data');
+                }
+                variantData = await variantResponse.json();
+
+                variantNameTypeDiv.classList.add('variantsContent', 'name-type-container');
+                variantsContainer.appendChild(variantNameTypeDiv);
+
+                variantNameHTML.classList.add('variantsContent', 'text', 'pokemonName', 'clickable')
+                variantNameHTML.textContent = variantName.charAt(0).toUpperCase() + variantName.substring(1);
+                variantNameHTML.setAttribute('onclick', `fetchNewInput(\'${variantName}\'); window.scrollTo(0, 0);`);
+                variantNameTypeDiv.appendChild(variantNameHTML);
+
+                variantType1HTML.classList.add('variantsContent');
+                variantType1 = variantData.types[0].type.name.charAt(0).toUpperCase() + variantData.types[0].type.name.substring(1);
+                variantType1HTML.src = `images/pokemon_types/Type_${variantType1}_HOME.webp`;
+                variantType1HTML.title = `${variantType1} type`;
+                variantNameTypeDiv.appendChild(variantType1HTML);
+
+                if (variantData.types.length === 2) {
+                    variantType2HTML.classList.add('variantsContent');
+                    variantType2 = variantData.types[1].type.name.charAt(0).toUpperCase() + variantData.types[1].type.name.substring(1);
+                    variantType2HTML.src = `images/pokemon_types/Type_${variantType2}_HOME.webp`;
+                    variantType2HTML.title = `${variantType2HTML} type`;
+                    variantNameTypeDiv.appendChild(variantType2HTML);
+                }
+
+                variantSpeciesHTML.classList.add('variantsContent', 'text', 'pokemonSpecies');
+                variantSpeciesHTML.textContent = 'The ' + pokemonSpecies;
+                variantsContainer.appendChild(variantSpeciesHTML);
+
+                variantImg.classList.add('variantsContent', 'pokemonImages');
+                variantImg.src = variantData.sprites.front_default;
+                variantImg.title = `${variantName.charAt(0).toUpperCase() + variantName.substring(1)} (next evolution) sprite`;
+                variantsContainer.appendChild(variantImg);
+                switchTheme(state.usingTheme); // Updating the theme, so the image has the correct colour
+
+                for (const item of speciesData.pokedex_numbers) {
+                    if (item.pokedex.name === 'national') {
+                        variantPokedexNr = item.entry_number;
+                        break;
+                    }
+                }
+                variantPokedexNrHTML.classList.add('variantsContent', 'text', 'pokedexNr');
+                variantPokedexNrHTML.textContent = `Pokédex Nr. ${variantPokedexNr}`;
+                variantsContainer.appendChild(variantPokedexNrHTML);
             }
         }
 

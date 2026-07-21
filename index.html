@@ -213,6 +213,13 @@
     }"></h2>
     <div id="nextEvos-container"></div>
 
+    <h2 id="otherVariantsText" class="title-text clickable" style='display: none;' onclick="
+    switch(document.getElementById('otherVariants-container').style.display) {
+        case('none'): document.getElementById('otherVariants-container').style.display = 'block'; break;
+        default: document.getElementById('otherVariants-container').style.display = 'none'; break;
+    }">Other variants:</h2>
+    <div id="otherVariants-container"></div>
+
     <h2 id="pokedexEntriesText" class="title-text clickable" style="display: none;" onclick="
     switch(document.getElementById('pokedexEntries-container').style.display) {
         case('none'): document.getElementById('pokedexEntries-container').style.display = 'block'; break;
