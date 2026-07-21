@@ -1,4 +1,4 @@
-const CACHE_NAME = 'monkadex-v3';
+const CACHE_NAME = 'monkadex-v4';
 const POKEMON_CACHE = "PokeAPI_cache.1";
 
 const CACHE_ASSETS = [
@@ -19,7 +19,7 @@ const CACHE_ASSETS = [
     "/monkadex/images/arrow_white.png"
 ];
 for(const item of ["pokedex", "dark", "light", "black", "ultraball", "premier", "gameboy"]) {
-    CACHE_ASSETS.push(`/monkadex/images/pokeballs/pokeball_${item}`);
+    CACHE_ASSETS.push(`/monkadex/images/pokeballs/pokeball_${item}.png`);
 }
 for(const item of ["Bug", "Dark", "Dragon", "Electric", "Fairy", "Fighting", "Fire", "Flying", "Ghost", "Grass", "Ground", "Ice", "Normal", "Poison", "Psychic", "Rock", "Steel", "Water"]) {
     CACHE_ASSETS.push(`/monkadex/images/pokemon_types/Type_${item}_HOME.webp`);
