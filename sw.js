@@ -1,7 +1,8 @@
-const CACHE_NAME = 'monkadex-v2';
+const CACHE_NAME = 'monkadex-v3';
 const POKEMON_CACHE = "PokeAPI_cache.1";
 
 const CACHE_ASSETS = [
+    "/monkadex/index.html",
     "/monkadex/offline.html",
     "/monkadex/style.css",
     "/monkadex/script.js",
@@ -54,20 +55,16 @@ self.addEventListener('fetch', event => {
     if(request.url.includes("pokeapi.co") || request.url.includes("PokeAPI")) {
         event.respondWith(
             caches.open(POKEMON_CACHE)
-            .then(cache => {
-                return cache.match(request)
-                    .then(cached => {
-                        if(cached) {
-                            return cached;
-                        }
-
-                        return fetch(request)
-                            .then(response => {
-                                return cache.put(request, response.clone())
-                                    .then(() => response);
-                            });
-                    })
-            })
+                .then(cache => {
+                    return cache.match(request)
+                        .then(cached => {
+                            return cached || fetch(request)
+                                                .then(response => {
+                                                    return cache.put(request, response.clone())
+                                                        .then(() => response);
+                                                });
+                        });
+                })
         );
     } else {
         event.respondWith(
