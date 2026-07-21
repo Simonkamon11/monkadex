@@ -303,7 +303,7 @@ export async function fetchPokemonData() {
                 nextEvosText.style.display = 'block';
 
                 let nextEvoNameTypeDiv, nextEvoNameHTML, nextEvoType1HTML, nextEvoType2HTML, nextEvoSpeciesHTML, nextEvoImg, nextEvoPokedexNrHTML;
-                let nextEvoName, nextEvoResponse, nextEvoData, nextEvoType1, nextEvoType2, nextEvoSpeciesResponse, nextEvoSpeciesData, nextEvoSpecies, nextEvoPokedexNr;
+                let nextEvoName, possibleName, nextEvoResponse, nextEvoData, nextEvoType1, nextEvoType2, nextEvoSpeciesResponse, nextEvoSpeciesData, nextEvoSpecies, nextEvoPokedexNr;
                 for (let i = 0; i < evolutionData.chain.evolves_to.length; i++) {
                     nextEvoNameTypeDiv = document.createElement('div');
                     nextEvoNameHTML = document.createElement('h2');
@@ -316,6 +316,15 @@ export async function fetchPokemonData() {
                     nextEvoName = evolutionData.chain.evolves_to[i].species.name;
 
                     nextEvoSpeciesData = null;
+                    for(let i = 0; i < pokemonName.length; i++) {
+                        if(name[i] === "-") {
+                            possibleName = nextEvoName + pokemonName.substring(i);
+                            nextEvoResponse = await fetch(`https://pokeapi.co/api/v2/pokemon/${possibleName}`);
+                            if(nextEvoResponse.status !== 404) {
+                                nextEvoName = possibleName;
+                            }
+                        }
+                    }
                     nextEvoResponse = await fetch(`https://pokeapi.co/api/v2/pokemon/${nextEvoName}`);
                     if(nextEvoResponse.status === 404) {
                         nextEvoSpeciesResponse = await fetch(`https://pokeapi.co/api/v2/pokemon-species/${nextEvoName}`);
@@ -398,7 +407,17 @@ export async function fetchPokemonData() {
 
                         let preEvoSpeciesData = null;
                         let preEvoSpeciesResponse;
-                        let preEvoResponse = await fetch(`https://pokeapi.co/api/v2/pokemon/${preEvoName}`);
+                        let possibleName, preEvoResponse;
+                        for(let i = 0; i < pokemonName.length; i++) {
+                            if(name[i] === "-") {
+                                possibleName = preEvoName + pokemonName.substring(i);
+                                preEvoResponse = await fetch(`https://pokeapi.co/api/v2/pokemon/${possibleName}`);
+                                if(preEvoResponse.status !== 404) {
+                                    preEvoName = possibleName;
+                                }
+                            }
+                        }
+                        preEvoResponse = await fetch(`https://pokeapi.co/api/v2/pokemon/${preEvoName}`);
                         if(preEvoResponse.status === 404) {
                             preEvoSpeciesResponse = await fetch(`https://pokeapi.co/api/v2/pokemon-species/${preEvoName}`);
                             if(!preEvoSpeciesResponse.ok) {
@@ -480,7 +499,7 @@ export async function fetchPokemonData() {
                             nextEvosText.style.display = 'block';
 
                             let nextEvoNameTypeDiv, nextEvoNameHTML, nextEvoType1HTML, nextEvoType2HTML, nextEvoSpeciesHTML, nextEvoImg, nextEvoPokedexNrHTML;
-                            let nextEvoName, nextEvoResponse, nextEvoData, nextEvoType1, nextEvoType2, nextEvoSpeciesResponse, nextEvoSpeciesData, nextEvoSpecies, nextEvoPokedexNr;
+                            let nextEvoName, possibleName, nextEvoResponse, nextEvoData, nextEvoType1, nextEvoType2, nextEvoSpeciesResponse, nextEvoSpeciesData, nextEvoSpecies, nextEvoPokedexNr;
                             for (let j = 0; j < evolutionData.chain.evolves_to[i].evolves_to.length; j++) {
                                 nextEvoNameTypeDiv = document.createElement('div');
                                 nextEvoNameHTML = document.createElement('h2');
@@ -493,6 +512,15 @@ export async function fetchPokemonData() {
                                 nextEvoName = evolutionData.chain.evolves_to[i].evolves_to[j].species.name;
 
                                 nextEvoSpeciesData = null;
+                                for(let i = 0; i < pokemonName.length; i++) {
+                                    if(name[i] === "-") {
+                                        possibleName = nextEvoName + pokemonName.substring(i);
+                                        nextEvoResponse = await fetch(`https://pokeapi.co/api/v2/pokemon/${possibleName}`);
+                                        if(nextEvoResponse.status !== 404) {
+                                            nextEvoName = possibleName;
+                                        }
+                                    }
+                                }
                                 nextEvoResponse = await fetch(`https://pokeapi.co/api/v2/pokemon/${nextEvoName}`);
                                 if(nextEvoResponse.status === 404) {
                                     nextEvoSpeciesResponse = await fetch(`https://pokeapi.co/api/v2/pokemon-species/${nextEvoName}`);
@@ -578,7 +606,17 @@ export async function fetchPokemonData() {
 
                                 let preEvoSpeciesData = null;
                                 let preEvoSpeciesResponse;
-                                let preEvoResponse = await fetch(`https://pokeapi.co/api/v2/pokemon/${preEvoName}`);
+                                let possibleName, preEvoResponse;
+                                for(let i = 0; i < pokemonName.length; i++) {
+                                    if(name[i] === "-") {
+                                        possibleName = preEvoName + pokemonName.substring(i);
+                                        preEvoResponse = await fetch(`https://pokeapi.co/api/v2/pokemon/${possibleName}`);
+                                        if(preEvoResponse.status !== 404) {
+                                            preEvoName = possibleName;
+                                        }
+                                    }
+                                }
+                                preEvoResponse = await fetch(`https://pokeapi.co/api/v2/pokemon/${preEvoName}`);
                                 if(preEvoResponse.status === 404) {
                                     preEvoSpeciesResponse = await fetch(`https://pokeapi.co/api/v2/pokemon-species/${preEvoName}`);
                                     if(!preEvoSpeciesResponse.ok) {
