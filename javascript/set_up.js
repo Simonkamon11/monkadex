@@ -1,6 +1,7 @@
 import { fetchNewInput, fetchNewLocationInput, fetchNewAreaInput, fetchNewRegionInput, fetchNewShinyInput, fetchNewGameInput, fetchNewMoveInput, fetchNewLocateInput, fetchNewGamesInput } from './fetch_new_input.js';
 import { fetchRegionsData, fetchMovesData, fetchConstructionData } from './fetch.js';
 import { switchTheme, encounterCounter } from './misc.js';
+import * as gameOfLife from './game_of_life.js';
 
 window.switchTheme = switchTheme;
 window.encounterCounter = encounterCounter;
@@ -11,7 +12,7 @@ export function setupIndex() {
 
     globalThis.pokemonParam = params.get('pokemon');
     globalThis.themeParam = params.get('theme');
-    if (pokemonParam) {
+    if(pokemonParam) {
         fetchNewInput(pokemonParam);
     }
     if(themeParam) {
@@ -21,7 +22,7 @@ export function setupIndex() {
         switchTheme(storedTheme);
     }
     else {
-        if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+        if(window.matchMedia("(prefers-color-scheme: dark)").matches) {
             switchTheme('dark');
         }
         else {
@@ -95,14 +96,14 @@ export function setupLocations() {
     else {
         fetchRegionsData();
     }
-    if (themeParam) {
+    if(themeParam) {
         switchTheme(themeParam);
     }
     else if(storedTheme) {
         switchTheme(storedTheme);
     }
     else {
-        if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+        if(window.matchMedia("(prefers-color-scheme: dark)").matches) {
             switchTheme('dark');
         }
         else {
@@ -141,7 +142,7 @@ export function setupShinytools() {
         const newUrl = `${window.location.pathname}?${params.toString()}`;
         window.history.pushState({}, "", newUrl);
     }
-    if (themeParam) {
+    if(themeParam) {
         switchTheme(themeParam);
     }
     else if(storedTheme) {
@@ -168,7 +169,7 @@ export function setupMoves() {
     else {
         fetchMovesData();
     }
-    if (themeParam) {
+    if(themeParam) {
         switchTheme(themeParam);
     }
     else if(storedTheme) {
@@ -183,6 +184,31 @@ export function setupMoves() {
         }
     }
     fetchConstructionData();
+}
+
+export function setupOffline() {
+    globalThis.params = new URLSearchParams(window.location.search);
+
+    globalThis.lenParam = params.get('length');
+    globalThis.themeParam = params.get('theme');
+    if(themeParam) {
+        switchTheme(themeParam);
+    }
+    else if(storedTheme) {
+        switchTheme(storedTheme);
+    }
+    else {
+        if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+            switchTheme('dark');
+        }
+        else {
+            switchTheme('pokedex');
+        }
+    }
+    if(lenParam && lenParam !== 50) {
+        gameOfLife.newLenInput(lenParam);
+    }
+    gameOfLife.createGrid();
 }
 
 export function setupOther() {

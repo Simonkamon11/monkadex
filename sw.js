@@ -1,10 +1,11 @@
-const CACHE_NAME = 'monkadex-v1';
-const POKEMON_CACHE = "PokéAPI_cache.1";
+const CACHE_NAME = 'monkadex-v2';
+const POKEMON_CACHE = "PokeAPI_cache.1";
 
-const OFFLINE_ASSETS = [
+const CACHE_ASSETS = [
     "/monkadex/offline.html",
     "/monkadex/style.css",
     "/monkadex/script.js",
+    "/monkadex/javascript/game_of_life.js",
     "/monkadex/javascript/set_up.js",
     "/monkadex/javascript/misc.js",
     "/monkadex/javascript/fetch.js",
@@ -27,7 +28,7 @@ const OFFLINE_ASSETS = [
 self.addEventListener('install', event => {
     event.waitUntil(
         caches.open(CACHE_NAME)
-        .then(cache => cache.addAll(OFFLINE_ASSETS))
+        .then(cache => cache.addAll(CACHE_ASSETS))
         .then(() => self.skipWaiting())
     );
 });

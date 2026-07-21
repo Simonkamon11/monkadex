@@ -1,4 +1,4 @@
-import { setupIndex, setupShinytools, setupLocations, setupMoves, setupOther, setup404 } from './javascript/set_up.js';
+import { setupIndex, setupShinytools, setupLocations, setupMoves, setupOffline, setupOther, setup404 } from './javascript/set_up.js';
 import { fetchPokemonData, fetchLocationData, fetchAreaData, fetchRegionData, fetchShinyData, fetchGameData, fetchMoveData, fetchGamesData, fetchLocateData } from './javascript/fetch.js';
 import { encounterCounter } from './javascript/misc.js';
 import { switchTheme } from './javascript/misc.js';
@@ -13,7 +13,7 @@ window.fetchMoveData = fetchMoveData;
 window.fetchGamesData = fetchGamesData;
 window.fetchLocateData = fetchLocateData;
 
-const page = document.body.dataset.page;
+window.page = document.body.dataset.page;
 
 if(page === "index") {
     setupIndex();
@@ -27,7 +27,10 @@ else if(page === "locations") {
 else if(page === "moves") {
     setupMoves();
 }
-else if(page === "about" || page === "sitemap" || page === "security" || page === "privacy" || page === "offline" || page === "thanks") {
+else if(page === "offline") {
+    setupOffline();
+}
+else if(page === "about" || page === "sitemap" || page === "security" || page === "privacy" || page === "thanks") {
     setupOther();
 }
 else {
