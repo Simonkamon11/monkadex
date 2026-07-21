@@ -36,21 +36,10 @@ export function createGrid() {
             cell.classList.add("cell", "grid");
             theme = state.usingTheme;
             cell.style = `height: 15px; width: 15px; margin: 1px; background-color: ${themes[theme][0]}; border-radius: 8px;`;
-            cell.onclick = () => {
-                theme = state.usingTheme;
-                cell = document.getElementById(`${j}, ${i}`);
-                switch(cell.style["background-color"]) {
-                    case themes[theme][0]:
-                        cell.style["background-color"] = themes[theme][1];
-                        break;
-                    case themes[theme][1]:
-                        cell.style["background-color"] = themes[theme][0];
-                        break;
-                }
-            }
             cellrow.appendChild(cell);
         }
     }
+    addOnclick()
     lifeContainer.style.display = "block";
     document.getElementById("timeInput").style.display = "inline-block";
     document.getElementById("playBtn").style.display = "inline-block";
@@ -133,26 +122,25 @@ function nextLife(build = false) {
             }
         }
     }
-    if(life === lifeClone) stopLife();
-    else {
-        life.replaceWith(lifeClone);
-        if(build) {
-            let cell, theme;
-            for(let i = 0; i < len; i++) {
-                for(let j = 0; j < len; j++) {
-                    cell = document.getElementById(`${j}, ${i}`);
-                    cell.onclick = () => {
-                        theme = state.usingTheme;
-                        cell = document.getElementById(`${j}, ${i}`);
-                        switch(cell.style["background-color"]) {
-                            case themes[theme][0]:
-                                cell.style["background-color"] = themes[theme][1];
-                                break;
-                            case themes[theme][1]:
-                                cell.style["background-color"] = themes[theme][0];
-                                break;
-                        }
-                    }
+    life.replaceWith(lifeClone);
+    if(build) addOnclick();
+}
+
+function addOnclick() {
+    let cell, theme;
+    for(let i = 0; i < len; i++) {
+        for(let j = 0; j < len; j++) {
+            cell = document.getElementById(`${j}, ${i}`);
+            cell.onclick = () => {
+                theme = state.usingTheme;
+                cell = document.getElementById(`${j}, ${i}`);
+                switch(cell.style["background-color"]) {
+                    case themes[theme][0]:
+                        cell.style["background-color"] = themes[theme][1];
+                        break;
+                    case themes[theme][1]:
+                        cell.style["background-color"] = themes[theme][0];
+                        break;
                 }
             }
         }
@@ -185,23 +173,5 @@ function runLife() {
 function stopLife() {
     clearTimeout(lifeTimer);
     lifeTimer = null;
-
-    let cell, theme;
-    for(let i = 0; i < len; i++) {
-        for(let j = 0; j < len; j++) {
-            cell = document.getElementById(`${j}, ${i}`);
-            cell.onclick = () => {
-                theme = state.usingTheme;
-                cell = document.getElementById(`${j}, ${i}`);
-                switch(cell.style["background-color"]) {
-                    case themes[theme][0]:
-                        cell.style["background-color"] = themes[theme][1];
-                        break;
-                    case themes[theme][1]:
-                        cell.style["background-color"] = themes[theme][0];
-                        break;
-                }
-            }
-        }
-    }
+    addOnclick();
 }
