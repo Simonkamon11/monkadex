@@ -599,8 +599,89 @@ export async function fetchPokemonData() {
                                 nextEvosContainer.appendChild(nextEvoPokedexNrHTML);
                             }
                         }
+                        let nextEvoNameTypeDiv, nextEvoNameHTML, nextEvoType1HTML, nextEvoType2HTML, nextEvoSpeciesHTML, nextEvoImg, nextEvoPokedexNrHTML;
+                        let nextEvoName, formName, nextEvoResponse, nextEvoData, nextEvoType1, nextEvoType2, nextEvoSpeciesResponse, nextEvoSpeciesData, nextEvoSpecies, nextEvoPokedexNr;
+                        for(const item of speciesData.varieties) {
+                            formName = item.pokemon.name;
+                            if(formName.includes("-mega") && !pokemonName.includes("-mega")) {
+                                nextEvosText.style.display = 'block';
+                                if(nextEvosText.textContent == "") {
+                                    nextEvosText.textContent = 'Next evolution:';
+                                } else {
+                                    nextEvosText.textContent = 'Next evolutions:';
+                                }
 
-                        break;
+                                nextEvoNameTypeDiv = document.createElement('div');
+                                nextEvoNameHTML = document.createElement('h2');
+                                nextEvoType1HTML = document.createElement('img');
+                                nextEvoType2HTML = document.createElement('img');
+                                nextEvoSpeciesHTML = document.createElement('h2');
+                                nextEvoImg = document.createElement('img');
+                                nextEvoPokedexNrHTML = document.createElement('h2');
+
+                                nextEvoName = formName;
+
+                                nextEvoResponse = await fetch(`https://pokeapi.co/api/v2/pokemon/${nextEvoName}`);
+                                if (!nextEvoResponse.ok) {
+                                    throw new Error('Could not fetch next-evolution data');
+                                }
+                                nextEvoData = await nextEvoResponse.json();
+                                    
+                                nextEvoNameTypeDiv.classList.add('nextEvosContent', 'name-type-container');
+                                nextEvosContainer.appendChild(nextEvoNameTypeDiv);
+                                    
+                                nextEvoNameHTML.classList.add('nextEvosContent', 'text', 'pokemonName', 'clickable')
+                                nextEvoNameHTML.textContent = nextEvoName.charAt(0).toUpperCase() + nextEvoName.substring(1);
+                                nextEvoNameHTML.setAttribute('onclick', `fetchNewInput(\'${nextEvoName}\'); window.scrollTo(0, 0);`);
+                                nextEvoNameTypeDiv.appendChild(nextEvoNameHTML);
+                                    
+                                nextEvoType1HTML.classList.add('nextEvosContent');
+                                nextEvoType1 = nextEvoData.types[0].type.name.charAt(0).toUpperCase() + nextEvoData.types[0].type.name.substring(1);
+                                nextEvoType1HTML.src = `images/pokemon_types/Type_${nextEvoType1}_HOME.webp`;
+                                nextEvoType1HTML.title = `${nextEvoType1} type`;
+                                nextEvoNameTypeDiv.appendChild(nextEvoType1HTML);
+                                    
+                                if (nextEvoData.types.length === 2) {
+                                    nextEvoType2HTML.classList.add('nextEvosContent');
+                                    nextEvoType2 = nextEvoData.types[1].type.name.charAt(0).toUpperCase() + nextEvoData.types[1].type.name.substring(1);
+                                    nextEvoType2HTML.src = `images/pokemon_types/Type_${nextEvoType2}_HOME.webp`;
+                                    nextEvoType2HTML.title = `${nextEvoType2HTML} type`;
+                                    nextEvoNameTypeDiv.appendChild(nextEvoType2HTML);
+                                }
+                                    
+                                nextEvoSpeciesResponse = await fetch(nextEvoData.species.url);
+                                if (!nextEvoSpeciesResponse.ok) {
+                                    throw new Error('Could not fetch next-evolution species data');
+                                }
+                                nextEvoSpeciesData = await nextEvoSpeciesResponse.json();
+                                    
+                                for (const item of nextEvoSpeciesData.genera) {
+                                    if (item.language.name === 'en') {
+                                        nextEvoSpecies = item.genus;
+                                        break;
+                                    }
+                                }
+                                nextEvoSpeciesHTML.classList.add('nextEvosContent', 'text', 'pokemonSpecies');
+                                nextEvoSpeciesHTML.textContent = 'The ' + nextEvoSpecies;
+                                nextEvosContainer.appendChild(nextEvoSpeciesHTML);
+                                    
+                                nextEvoImg.classList.add('nextEvosContent', 'pokemonImages');
+                                nextEvoImg.src = nextEvoData.sprites.front_default;
+                                nextEvoImg.title = `${nextEvoName.charAt(0).toUpperCase() + nextEvoName.substring(1)} (next evolution) sprite`;
+                                nextEvosContainer.appendChild(nextEvoImg);
+                                switchTheme(state.usingTheme); // Updating the theme, so the image has the correct colour
+                                    
+                                for (const item of nextEvoSpeciesData.pokedex_numbers) {
+                                    if (item.pokedex.name === 'national') {
+                                        nextEvoPokedexNr = item.entry_number;
+                                        break;
+                                    }
+                                }
+                                nextEvoPokedexNrHTML.classList.add('nextEvosContent', 'text', 'pokedexNr');
+                                nextEvoPokedexNrHTML.textContent = `Pokédex Nr. ${nextEvoPokedexNr}`;
+                                nextEvosContainer.appendChild(nextEvoPokedexNrHTML);
+                            }
+                        }
                     }
                     else {
                         for (let j = 0; j < evolutionData.chain.evolves_to[i].evolves_to.length; j++) {
@@ -694,7 +775,89 @@ export async function fetchPokemonData() {
                                 preEvoPokedexNrHTML.textContent = `Pokédex Nr. ${preEvoPokedexNr}`;
                                 preEvoPokedexNrHTML.style.display = 'block';
 
-                                break;
+                                let nextEvoNameTypeDiv, nextEvoNameHTML, nextEvoType1HTML, nextEvoType2HTML, nextEvoSpeciesHTML, nextEvoImg, nextEvoPokedexNrHTML;
+                                let nextEvoName, formName, nextEvoResponse, nextEvoData, nextEvoType1, nextEvoType2, nextEvoSpeciesResponse, nextEvoSpeciesData, nextEvoSpecies, nextEvoPokedexNr;
+                                for(const item of speciesData.varieties) {
+                                    formName = item.pokemon.name;
+                                    if(formName.includes("-mega") && !pokemonName.includes("-mega")) {
+                                        nextEvosText.style.display = 'block';
+                                        if(nextEvosText.textContent == "") {
+                                            nextEvosText.textContent = 'Next evolution:';
+                                        } else {
+                                            nextEvosText.textContent = 'Next evolutions:';
+                                        }
+
+                                        nextEvoNameTypeDiv = document.createElement('div');
+                                        nextEvoNameHTML = document.createElement('h2');
+                                        nextEvoType1HTML = document.createElement('img');
+                                        nextEvoType2HTML = document.createElement('img');
+                                        nextEvoSpeciesHTML = document.createElement('h2');
+                                        nextEvoImg = document.createElement('img');
+                                        nextEvoPokedexNrHTML = document.createElement('h2');
+
+                                        nextEvoName = formName;
+
+                                        nextEvoResponse = await fetch(`https://pokeapi.co/api/v2/pokemon/${nextEvoName}`);
+                                        if (!nextEvoResponse.ok) {
+                                            throw new Error('Could not fetch next-evolution data');
+                                        }
+                                        nextEvoData = await nextEvoResponse.json();
+                                    
+                                        nextEvoNameTypeDiv.classList.add('nextEvosContent', 'name-type-container');
+                                        nextEvosContainer.appendChild(nextEvoNameTypeDiv);
+                                    
+                                        nextEvoNameHTML.classList.add('nextEvosContent', 'text', 'pokemonName', 'clickable')
+                                        nextEvoNameHTML.textContent = nextEvoName.charAt(0).toUpperCase() + nextEvoName.substring(1);
+                                        nextEvoNameHTML.setAttribute('onclick', `fetchNewInput(\'${nextEvoName}\'); window.scrollTo(0, 0);`);
+                                        nextEvoNameTypeDiv.appendChild(nextEvoNameHTML);
+                                    
+                                        nextEvoType1HTML.classList.add('nextEvosContent');
+                                        nextEvoType1 = nextEvoData.types[0].type.name.charAt(0).toUpperCase() + nextEvoData.types[0].type.name.substring(1);
+                                        nextEvoType1HTML.src = `images/pokemon_types/Type_${nextEvoType1}_HOME.webp`;
+                                        nextEvoType1HTML.title = `${nextEvoType1} type`;
+                                        nextEvoNameTypeDiv.appendChild(nextEvoType1HTML);
+                                    
+                                        if (nextEvoData.types.length === 2) {
+                                            nextEvoType2HTML.classList.add('nextEvosContent');
+                                            nextEvoType2 = nextEvoData.types[1].type.name.charAt(0).toUpperCase() + nextEvoData.types[1].type.name.substring(1);
+                                            nextEvoType2HTML.src = `images/pokemon_types/Type_${nextEvoType2}_HOME.webp`;
+                                            nextEvoType2HTML.title = `${nextEvoType2HTML} type`;
+                                            nextEvoNameTypeDiv.appendChild(nextEvoType2HTML);
+                                        }
+                                    
+                                        nextEvoSpeciesResponse = await fetch(nextEvoData.species.url);
+                                        if (!nextEvoSpeciesResponse.ok) {
+                                            throw new Error('Could not fetch next-evolution species data');
+                                        }
+                                        nextEvoSpeciesData = await nextEvoSpeciesResponse.json();
+                                    
+                                        for (const item of nextEvoSpeciesData.genera) {
+                                            if (item.language.name === 'en') {
+                                                nextEvoSpecies = item.genus;
+                                                break;
+                                            }
+                                        }
+                                        nextEvoSpeciesHTML.classList.add('nextEvosContent', 'text', 'pokemonSpecies');
+                                        nextEvoSpeciesHTML.textContent = 'The ' + nextEvoSpecies;
+                                        nextEvosContainer.appendChild(nextEvoSpeciesHTML);
+                                    
+                                        nextEvoImg.classList.add('nextEvosContent', 'pokemonImages');
+                                        nextEvoImg.src = nextEvoData.sprites.front_default;
+                                        nextEvoImg.title = `${nextEvoName.charAt(0).toUpperCase() + nextEvoName.substring(1)} (next evolution) sprite`;
+                                        nextEvosContainer.appendChild(nextEvoImg);
+                                        switchTheme(state.usingTheme); // Updating the theme, so the image has the correct colour
+                                    
+                                        for (const item of nextEvoSpeciesData.pokedex_numbers) {
+                                            if (item.pokedex.name === 'national') {
+                                                nextEvoPokedexNr = item.entry_number;
+                                                break;
+                                            }
+                                        }
+                                        nextEvoPokedexNrHTML.classList.add('nextEvosContent', 'text', 'pokedexNr');
+                                        nextEvoPokedexNrHTML.textContent = `Pokédex Nr. ${nextEvoPokedexNr}`;
+                                        nextEvosContainer.appendChild(nextEvoPokedexNrHTML);
+                                    }
+                                }
                             }
                         }
                     }
@@ -705,7 +868,14 @@ export async function fetchPokemonData() {
         document.querySelectorAll('.variantsContent').forEach(el => el.remove());
 
         const variantsContainer = document.getElementById('otherVariants-container');
-        if(speciesData.varieties.length > 1) {
+        const variantList = speciesData.varieties.filter(variant => {
+            if(pokemonName.includes("-mega")) {
+                return variant.pokemon.name !== pokemonName.substring(0, pokemonName.indexOf("-mega"));
+            } else {
+                return !variant.pokemon.name.includes("-mega");
+            }
+        });
+        if(variantList.length > 1) {
             document.getElementById('otherVariantsText').style.display = 'block';
         } else {
             document.getElementById('otherVariantsText').style.display = 'none';
@@ -713,7 +883,7 @@ export async function fetchPokemonData() {
 
         let variantNameTypeDiv, variantNameHTML, variantType1HTML, variantType2HTML, variantSpeciesHTML, variantImg, variantPokedexNrHTML;
         let variantName, variantResponse, variantData, variantType1, variantType2, variantPokedexNr;
-        for(const variant of speciesData.varieties) {
+        for(const variant of variantList) {
             variantName = variant.pokemon.name;
             if(variantName !== pokemonName) {
                 variantNameTypeDiv = document.createElement('div');
