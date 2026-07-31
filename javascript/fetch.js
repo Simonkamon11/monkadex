@@ -412,9 +412,12 @@ export async function fetchPokemonData() {
                             if(name[i] === "-") {
                                 possibleName = preEvoName + pokemonName.substring(i);
                                 preEvoResponse = await fetch(`https://pokeapi.co/api/v2/pokemon/${possibleName}`);
-                                if(preEvoResponse.status !== 404) {
-                                    preEvoName = possibleName;
+                                if(preEvoResponse.status === 404) {
+                                    if(pokemonName.includes("-mega")) {
+                                        possibleName = pokemonName.substring(0, pokemonName.indexOf("-mega"));
+                                    }
                                 }
+                                preEvoName = possibleName;
                             }
                         }
                         preEvoResponse = await fetch(`https://pokeapi.co/api/v2/pokemon/${preEvoName}`);
@@ -611,9 +614,12 @@ export async function fetchPokemonData() {
                                     if(name[i] === "-") {
                                         possibleName = preEvoName + pokemonName.substring(i);
                                         preEvoResponse = await fetch(`https://pokeapi.co/api/v2/pokemon/${possibleName}`);
-                                        if(preEvoResponse.status !== 404) {
-                                            preEvoName = possibleName;
+                                        if(preEvoResponse.status === 404) {
+                                            if(pokemonName.includes("-mega")) {
+                                                possibleName = pokemonName.substring(0, pokemonName.indexOf("-mega"));
+                                            }
                                         }
+                                        preEvoName = possibleName;
                                     }
                                 }
                                 preEvoResponse = await fetch(`https://pokeapi.co/api/v2/pokemon/${preEvoName}`);
